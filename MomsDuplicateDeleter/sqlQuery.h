@@ -15,11 +15,11 @@
   "':fileType') "                                                              \
   "order by size desc"
 #define qryIDRandomDuplicatesFromPath                                          \
-  "SELECT id FROM files WHERE checksum IN (SELECT checksum from files WHERE "  \
+  "SELECT id, size FROM files WHERE checksum IN (SELECT checksum from files WHERE "  \
   "size IN (SELECT size from files  group by size having COUNT(size) > 1) "    \
   "group by checksum having COUNT(checksum) > 1)  "                            \
   "and (path ==':filePath') ORDER BY RANDOM() LIMIT 1"
-#define qryIDRandomDuplicatesNotInPath "select id from files where checksum in (SELECT checksum FROM files WHERE checksum IN (SELECT checksum from files WHERE size IN (SELECT size from files  group by size having COUNT(size) > 1) group by checksum having COUNT(checksum) > 1) and (path == ':filePath')) AND (path != ':filePath') ORDER BY RANDOM() LIMIT 1"
+#define qryIDRandomDuplicatesNotInPath "select id, size from files where checksum in (SELECT checksum FROM files WHERE checksum IN (SELECT checksum from files WHERE size IN (SELECT size from files  group by size having COUNT(size) > 1) group by checksum having COUNT(checksum) > 1) and (path == ':filePath')) AND (path != ':filePath') ORDER BY RANDOM() LIMIT 1"
 #define qrySelectDuplicatesPaths                                               \
   "SELECT distinct path FROM files WHERE checksum IN (SELECT checksum from "   \
   "files WHERE "                                                               \

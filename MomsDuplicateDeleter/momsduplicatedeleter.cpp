@@ -8,6 +8,8 @@ MomsDuplicateDeleter::MomsDuplicateDeleter(QWidget *parent)
     ui->setupUi(this);
     databaseFilename = "duplicateFileList.db";
     ui->pbSearch->setEnabled(false);
+    ui->progressBar->hide();
+    ui->pbSimDelete->hide();
     ui->tableDuplicateResultsList->setColumnCount(5);
     ui->tableDuplicateResultsList->verticalHeader()->setVisible(false);
 //    ui->tableDuplicateResultsList->horizontalHeader()->setVisible(true);
@@ -97,6 +99,8 @@ void MomsDuplicateDeleter::deleteDuplicateFiles(bool simulatedFlag) {
         qWarning() << "ERROR: " << query6.lastError().text();
       //    qDebug() << "size returned by query is " << query2.value(0).toInt();
       QString fileToBeDeleted;
+      ui->progressBar->show();
+      QApplication::processEvents();
       while (query6.next()) {
         fileToBeDeleted.append(query6.value("path").toString());
         fileToBeDeleted.append("/");
@@ -120,11 +124,22 @@ void MomsDuplicateDeleter::deleteDuplicateFiles(bool simulatedFlag) {
         query5.prepare(qryDeleteFileByID + QString::number(uniqueFileID));
         if (!query5.exec())
           qWarning() << "ERROR: " << query5.lastError().text();
-        qDebug() << "rows affected is  " << query5.numRowsAffected();
+//        qDebug() << "rows affected is  " << query5.numRowsAffected();
         j++;
+        if (j % 200 == 0){
+          qDebug() << "file processed is " << j;
+           int totalFilesToProcess = ui->lbNumberOfDuplicateFiles->text().toInt();
+          float progressFraction = ((j*100) / totalFilesToProcess);
+          qDebug() << "file progressFraction is " << progressFraction;
+  //        ui->progressBar->setValue(int((i/totalFilesToProcess)*100));
+          ui->progressBar->setValue(int(progressFraction));
+  //        ui->progressBar->update();
+          QApplication::processEvents();
+}
       }
     }
   } while (uniqueFileCount > 0);
+  ui->progressBar->hide();
   if (!simulatedFlag) {
     db.commit();
     db.exec("VACUUM");
@@ -302,11 +317,23 @@ void MomsDuplicateDeleter::on_pbSearch_clicked()
     //       qWarning() << "ERROR: " << query.lastError().text();
     if (!query.exec(qryCreateIndexes))
       qWarning() << "ERROR: " << query.lastError().text();
+    QDirIterator it2(ui->lePathToSearch->text(),
+                    QStringList() << ui->cbFileType->currentText(), QDir::Files,
+                    QDirIterator::Subdirectories);
+int totalFilesToProcess=0;
+    while (it2.hasNext()) {
+        totalFilesToProcess++;
+        it2.next();
+}
+    qDebug() << "number of files to process is " << totalFilesToProcess;
     QDirIterator it(ui->lePathToSearch->text(),
                     QStringList() << ui->cbFileType->currentText(), QDir::Files,
                     QDirIterator::Subdirectories);
+ui->progressBar->show();
+QApplication::processEvents();
+
     int i = 1;
-    while (it.hasNext()) {
+    while (it.hasNext()) {        
       fileList.push_back(it.next());
       QFile file(it.filePath());
       if (file.open(QIODevice::ReadOnly)) {
@@ -381,10 +408,18 @@ void MomsDuplicateDeleter::on_pbSearch_clicked()
       if (!query.exec(insertQuery))
         qWarning() << "ERROR: " << query.lastError().text();
       //        qDebug() << it.next();
-      if (i % 200 == 0)
+      if (i % 200 == 0){
         qDebug() << "file processed is " << i;
-      i++;
+        float progressFraction = ((i*100) / totalFilesToProcess);
+        qDebug() << "file progressFraction is " << progressFraction;
+//        ui->progressBar->setValue(int((i/totalFilesToProcess)*100));
+        ui->progressBar->setValue(int(progressFraction));
+//        ui->progressBar->update();
+        QApplication::processEvents();
+      }
+    i++;
     }
+ui->progressBar->hide();
     qDebug() << "number of files processed is " << fileList.size();
     db.close();
     return fileList.size();
@@ -410,35 +445,70 @@ void MomsDuplicateDeleter::on_pbSimDelete_clicked()
 
 void MomsDuplicateDeleter::on_pbActualDelete_clicked()
 {
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "File Delete Operation", "Deleting duplicate files randomly.\nAre you sure you?",
-                                  QMessageBox::Yes|QMessageBox::No);
-    if (reply == QMessageBox::Yes) {
-      deleteDuplicateFiles(false);
-      fillFilesTable();
-    } else {
-      qDebug() << "Operation Cancelled";
+    if (ui->cbSimulateFlag->isChecked()){
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Simulating File Delete Operation", "Simulating Deleting duplicate files randomly.\nAre you sure you?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+          deleteDuplicateFiles(true);
+          fillFilesTable();
+        } else {
+          qDebug() << "Operation Cancelled";
+        }
     }
 
+    else{
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "File Delete Operation", "Deleting duplicate files randomly.\nAre you sure you?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+          deleteDuplicateFiles(false);
+          fillFilesTable();
+        } else {
+          qDebug() << "Operation Cancelled";
+        }
+    }
 }
 
 void MomsDuplicateDeleter::on_pbDeleteFromPath_clicked()
 {
-    QString sFilePath(ui->tableDuplicateResultsList
-                          ->item(ui->tableDuplicateResultsList->currentRow(), 2)
-                          ->text());
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "File Delete Operation", "Deleting duplicate files in\n " + sFilePath + "\nAre you sure you?",
-                                  QMessageBox::Yes|QMessageBox::No);
-    if (reply == QMessageBox::Yes) {
-      deleteDuplicateFilesFromPath(false);
-      fillFilesTable();
-    } else {
-      qDebug() << "Operation Cancelled";
+    if (ui->tableDuplicateResultsList->currentRow() > -1){
+    if (ui->cbSimulateFlag->isChecked()){
+        QString sFilePath(ui->tableDuplicateResultsList
+                              ->item(ui->tableDuplicateResultsList->currentRow(), 2)
+                              ->text());
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Simulating File Delete Operation", "Simulating Deleting duplicate files in\n " + sFilePath + "\nAre you sure you?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+          deleteDuplicateFilesFromPath(true);
+          fillFilesTable();
+        } else {
+          qDebug() << "Operation Cancelled";
+        }
+    }
+
+    else{
+        QString sFilePath(ui->tableDuplicateResultsList
+                              ->item(ui->tableDuplicateResultsList->currentRow(), 2)
+                              ->text());
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "File Delete Operation", "Deleting duplicate files in\n " + sFilePath + "\nAre you sure you?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+          deleteDuplicateFilesFromPath(false);
+          fillFilesTable();
+        } else {
+          qDebug() << "Operation Cancelled";
+        }
     }
 }
+    else      QMessageBox::information( 0, "No Row Selected", "Please select a row with the File Path of the duplicates you want to delete. ");
+
+    }
 void MomsDuplicateDeleter::deleteDuplicateFilesFromPath(bool simulatedFlag) {
-  unsigned int j = 0;
+if (ui->tableDuplicateResultsList->currentRow() > -1){
+    unsigned int j = 0;
   QApplication::setOverrideCursor(Qt::WaitCursor);
   QApplication::processEvents();
   const QString DRIVER("QSQLITE");
@@ -451,6 +521,7 @@ void MomsDuplicateDeleter::deleteDuplicateFilesFromPath(bool simulatedFlag) {
     qWarning() << "ERROR: " << db.lastError();
   db.transaction();
   unsigned int uniqueFileCount = 0;
+  unsigned int totalSize = 0;
   QSqlQuery query4;
   QString sFilePath(ui->tableDuplicateResultsList
                         ->item(ui->tableDuplicateResultsList->currentRow(), 2)
@@ -476,6 +547,7 @@ void MomsDuplicateDeleter::deleteDuplicateFilesFromPath(bool simulatedFlag) {
       unsigned int uniqueFileID = 0;
       while (query2.next()) {
         uniqueFileID = query2.value("id").toUInt();
+        totalSize += query2.value("size").toUInt();
       }
       QSqlQuery query6;
       query6.prepare(qryFilePath + QString::number(uniqueFileID));
@@ -524,9 +596,18 @@ void MomsDuplicateDeleter::deleteDuplicateFilesFromPath(bool simulatedFlag) {
   db.close();
   QApplication::restoreOverrideCursor();
   QApplication::processEvents();
+  if (!simulatedFlag) {
+      QMessageBox::information( 0, "Delete Operation Stats", QString::number(j) + " File(s) - Total number of file(s) deleted\n" + QString::number(totalSize/1000000) + " MB - Total Space Reclaimed ");
+  } else{
+      QMessageBox::information( 0, "Simulated Delete Operation Stats", QString::number(j) + " File(s) - Total number of file(s) that would be deleted\n" + QString::number(totalSize/1000000) + " MB - Total Space that would be Reclaimed ");
+  }
+}
+else      QMessageBox::information( 0, "No Row Selected", "Please select a row with the File Path of the duplicates you want to delete. ");
+
 }
 
 void MomsDuplicateDeleter::deleteDuplicateFilesNotInPath(bool simulatedFlag) {
+    if (ui->tableDuplicateResultsList->currentRow() > -1){
   unsigned int j = 0;
   QApplication::setOverrideCursor(Qt::WaitCursor);
   QApplication::processEvents();
@@ -540,6 +621,7 @@ void MomsDuplicateDeleter::deleteDuplicateFilesNotInPath(bool simulatedFlag) {
     qWarning() << "ERROR: " << db.lastError();
   db.transaction();
   unsigned int uniqueFileCount = 0;
+  unsigned int totalSize = 0;
   QSqlQuery query4;
   QString sFilePath(ui->tableDuplicateResultsList
                         ->item(ui->tableDuplicateResultsList->currentRow(), 2)
@@ -565,6 +647,7 @@ void MomsDuplicateDeleter::deleteDuplicateFilesNotInPath(bool simulatedFlag) {
       unsigned int uniqueFileID = 0;
       while (query2.next()) {
         uniqueFileID = query2.value("id").toUInt();
+        totalSize += query2.value("size").toUInt();
       }
       QSqlQuery query6;
       query6.prepare(qryFilePath + QString::number(uniqueFileID));
@@ -613,13 +696,30 @@ void MomsDuplicateDeleter::deleteDuplicateFilesNotInPath(bool simulatedFlag) {
   db.close();
   QApplication::restoreOverrideCursor();
   QApplication::processEvents();
+}  else      QMessageBox::information( 0, "No Row Selected", "Please select a row with the File Path of the duplicates you want to keep. \nThis will delete the duplicates from all other File Paths that contain duplicated in this path.");
+
 }
+
 
 
 
 void MomsDuplicateDeleter::on_pbKeepInPath_clicked()
 {
+    if (ui->tableDuplicateResultsList->currentRow() > -1){
+    if(ui->cbSimulateFlag->isChecked()){
     QString sFilePath(ui->tableDuplicateResultsList
+                          ->item(ui->tableDuplicateResultsList->currentRow(), 2)
+                          ->text());
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "File Delete Operation", "Deleting duplicate files not in\n " + sFilePath + "\nAre you sure you?",
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        deleteDuplicateFilesNotInPath(true);
+        fillFilesTable();
+    } else {
+      qDebug() << "Operation Cancelled";
+    }}
+ else{   QString sFilePath(ui->tableDuplicateResultsList
                           ->item(ui->tableDuplicateResultsList->currentRow(), 2)
                           ->text());
     QMessageBox::StandardButton reply;
@@ -632,3 +732,5 @@ void MomsDuplicateDeleter::on_pbKeepInPath_clicked()
       qDebug() << "Operation Cancelled";
     }
 }
+    }  else      QMessageBox::information( 0, "No Row Selected", "Please select a row with the File Path of the duplicates you want to keep. \nThis will delete the duplicates from all other File Paths that contain duplicated in this path.");
+    }

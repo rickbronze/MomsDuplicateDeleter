@@ -11,12 +11,14 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QProgressBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTableWidget>
@@ -43,6 +45,9 @@ public:
     QLabel *lbNumberOfDuplicateFiles;
     QLineEdit *lePathToSearch;
     QTableWidget *tableDuplicateResultsList;
+    QProgressBar *progressBar;
+    QLineEdit *leUserSubPath;
+    QCheckBox *cbSimulateFlag;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -69,6 +74,7 @@ public:
         cbFileType->addItem(QString());
         cbFileType->addItem(QString());
         cbFileType->addItem(QString());
+        cbFileType->addItem(QString());
         cbFileType->setObjectName(QString::fromUtf8("cbFileType"));
         cbFileType->setGeometry(QRect(380, 40, 73, 22));
         cbFileType->setFont(font);
@@ -78,15 +84,15 @@ public:
         pbFillTablesFromDB->setFont(font);
         pbDeleteFromPath = new QPushButton(centralwidget);
         pbDeleteFromPath->setObjectName(QString::fromUtf8("pbDeleteFromPath"));
-        pbDeleteFromPath->setGeometry(QRect(300, 80, 221, 28));
+        pbDeleteFromPath->setGeometry(QRect(210, 80, 221, 28));
         pbDeleteFromPath->setFont(font);
         pbKeepInPath = new QPushButton(centralwidget);
         pbKeepInPath->setObjectName(QString::fromUtf8("pbKeepInPath"));
-        pbKeepInPath->setGeometry(QRect(580, 80, 221, 28));
+        pbKeepInPath->setGeometry(QRect(480, 80, 221, 28));
         pbKeepInPath->setFont(font);
         pbSimDelete = new QPushButton(centralwidget);
         pbSimDelete->setObjectName(QString::fromUtf8("pbSimDelete"));
-        pbSimDelete->setGeometry(QRect(600, 10, 151, 28));
+        pbSimDelete->setGeometry(QRect(1360, 520, 151, 28));
         pbSimDelete->setFont(font);
         lbNumberOfUniqueDuplicateFiles = new QLabel(centralwidget);
         lbNumberOfUniqueDuplicateFiles->setObjectName(QString::fromUtf8("lbNumberOfUniqueDuplicateFiles"));
@@ -102,7 +108,7 @@ public:
         pbSelectDirectory->setFont(font);
         pbSearch = new QPushButton(centralwidget);
         pbSearch->setObjectName(QString::fromUtf8("pbSearch"));
-        pbSearch->setGeometry(QRect(460, 40, 101, 23));
+        pbSearch->setGeometry(QRect(470, 40, 101, 23));
         pbSearch->setFont(font);
         pbRemoveDB = new QPushButton(centralwidget);
         pbRemoveDB->setObjectName(QString::fromUtf8("pbRemoveDB"));
@@ -126,6 +132,16 @@ public:
         tableDuplicateResultsList->setGeometry(QRect(30, 140, 1381, 471));
         tableDuplicateResultsList->setFont(font);
         tableDuplicateResultsList->setSortingEnabled(true);
+        progressBar = new QProgressBar(centralwidget);
+        progressBar->setObjectName(QString::fromUtf8("progressBar"));
+        progressBar->setGeometry(QRect(430, 230, 621, 81));
+        progressBar->setValue(0);
+        leUserSubPath = new QLineEdit(centralwidget);
+        leUserSubPath->setObjectName(QString::fromUtf8("leUserSubPath"));
+        leUserSubPath->setGeometry(QRect(1170, 70, 113, 25));
+        cbSimulateFlag = new QCheckBox(centralwidget);
+        cbSimulateFlag->setObjectName(QString::fromUtf8("cbSimulateFlag"));
+        cbSimulateFlag->setGeometry(QRect(870, 80, 191, 23));
         MomsDuplicateDeleter->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MomsDuplicateDeleter);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -156,6 +172,7 @@ public:
         cbFileType->setItemText(6, QApplication::translate("MomsDuplicateDeleter", "*.jpeg", nullptr));
         cbFileType->setItemText(7, QApplication::translate("MomsDuplicateDeleter", "*.mov", nullptr));
         cbFileType->setItemText(8, QApplication::translate("MomsDuplicateDeleter", "*.bmp", nullptr));
+        cbFileType->setItemText(9, QApplication::translate("MomsDuplicateDeleter", "*.*", nullptr));
 
         pbFillTablesFromDB->setText(QApplication::translate("MomsDuplicateDeleter", "Load Current Duplicates List", nullptr));
         pbDeleteFromPath->setText(QApplication::translate("MomsDuplicateDeleter", "Delete from Path Chosen", nullptr));
@@ -169,9 +186,10 @@ public:
         pbSelectDirectory->setText(QApplication::translate("MomsDuplicateDeleter", "...", nullptr));
         pbSearch->setText(QApplication::translate("MomsDuplicateDeleter", "Search", nullptr));
         pbRemoveDB->setText(QApplication::translate("MomsDuplicateDeleter", "Start Over", nullptr));
-        pbActualDelete->setText(QApplication::translate("MomsDuplicateDeleter", "Actual Delete", nullptr));
+        pbActualDelete->setText(QApplication::translate("MomsDuplicateDeleter", "Delete  Rendomly", nullptr));
         lbNumberOfDuplicateFiles->setText(QApplication::translate("MomsDuplicateDeleter", "Number of files that are duplicate", nullptr));
         lePathToSearch->setText(QApplication::translate("MomsDuplicateDeleter", "Choose a directory to search for duplicates in.", nullptr));
+        cbSimulateFlag->setText(QApplication::translate("MomsDuplicateDeleter", "Simulate Delete", nullptr));
     } // retranslateUi
 
 };
