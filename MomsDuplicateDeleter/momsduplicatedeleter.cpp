@@ -9,7 +9,9 @@ MomsDuplicateDeleter::MomsDuplicateDeleter(QWidget *parent)
     databaseFilename = "duplicateFileList.db";
     ui->pbSearch->setEnabled(false);
     ui->progressBar->hide();
+    ui->progressBar->setAlignment(Qt::AlignCenter);
     ui->pbSimDelete->hide();
+    ui->leUserSubPath->hide();
     ui->tableDuplicateResultsList->setColumnCount(5);
     ui->tableDuplicateResultsList->verticalHeader()->setVisible(false);
 //    ui->tableDuplicateResultsList->horizontalHeader()->setVisible(true);
@@ -21,7 +23,7 @@ MomsDuplicateDeleter::MomsDuplicateDeleter(QWidget *parent)
     QStringList m_TableHeader;
     m_TableHeader << "ID"
                   << "File Name"
-                  << "File Path"
+                  << "Directory/Folder"
                   << "File Size"
                   << "CRC";
     ui->tableDuplicateResultsList->setHorizontalHeaderLabels(m_TableHeader);
@@ -72,7 +74,7 @@ void MomsDuplicateDeleter::deleteDuplicateFiles(bool simulatedFlag) {
   if (!db.open())
     qWarning() << "ERROR: " << db.lastError();
   unsigned int uniqueFileCount = 0;
-  unsigned int totalSize = 0;
+qint64 totalSize = 0;
   QSqlQuery query4;
   query4.prepare(qryCountOfUniqueChecksums);
   do {
@@ -97,9 +99,11 @@ void MomsDuplicateDeleter::deleteDuplicateFiles(bool simulatedFlag) {
       query6.prepare(qryFilePath + QString::number(uniqueFileID));
       if (!query6.exec())
         qWarning() << "ERROR: " << query6.lastError().text();
-      //    qDebug() << "size returned by query is " << query2.value(0).toInt();
       QString fileToBeDeleted;
       ui->progressBar->show();
+      ui->progressBar->setFormat("Starting delete operation " );
+      ui->progressBar->setValue(0);
+
       QApplication::processEvents();
       while (query6.next()) {
         fileToBeDeleted.append(query6.value("path").toString());
@@ -116,8 +120,8 @@ void MomsDuplicateDeleter::deleteDuplicateFiles(bool simulatedFlag) {
             qWarning() << "ERROR: Removing file  " << fileToBeDeleted;
             qWarning() << "ERROR:  " << removeFile.errorString();
 
-          } else
-            qDebug() << "fileToBeDeleted is " << fileToBeDeleted;
+          }
+//          else  qDebug() << "fileToBeDeleted is " << fileToBeDeleted;
         }
         //    qDebug() << "random file id result value " << query2.value("id");
         QSqlQuery query5;
@@ -128,18 +132,16 @@ void MomsDuplicateDeleter::deleteDuplicateFiles(bool simulatedFlag) {
         j++;
         if (j % 200 == 0){
           qDebug() << "file processed is " << j;
-           int totalFilesToProcess = ui->lbNumberOfDuplicateFiles->text().toInt();
+           int totalFilesToProcess = ui->lbNumberOfDuplicateFiles->text().toInt()-ui->lbNumberOfUniqueDuplicateFiles->text().toUInt();
           float progressFraction = ((j*100) / totalFilesToProcess);
           qDebug() << "file progressFraction is " << progressFraction;
-  //        ui->progressBar->setValue(int((i/totalFilesToProcess)*100));
           ui->progressBar->setValue(int(progressFraction));
-  //        ui->progressBar->update();
+          ui->progressBar->setFormat("Deleted progress is " + QString::number(progressFraction) + "%" );
           QApplication::processEvents();
 }
       }
     }
   } while (uniqueFileCount > 0);
-  ui->progressBar->hide();
   if (!simulatedFlag) {
     db.commit();
     db.exec("VACUUM");
@@ -151,6 +153,7 @@ void MomsDuplicateDeleter::deleteDuplicateFiles(bool simulatedFlag) {
   db.exec("VACUUM");
   db.close();
   QApplication::restoreOverrideCursor();
+  ui->progressBar->hide();
   QApplication::processEvents();
   if (!simulatedFlag) {
       QMessageBox::information( 0, "Delete Operation Stats", QString::number(j) + " File(s) - Total number of file(s) deleted\n" + QString::number(totalSize/1000000) + " MB - Total Space Reclaimed ");
@@ -312,9 +315,6 @@ void MomsDuplicateDeleter::on_pbSearch_clicked()
     QSqlQuery query(qryCreateFileTable);
     if (!query.isActive())
       qWarning() << "ERROR: " << query.lastError().text();
-    //     if(!query.exec("INSERT INTO files(name, path, size, checksum)
-    //     VALUES('Eddie Guerrero', 'test', 23, 43)"))
-    //       qWarning() << "ERROR: " << query.lastError().text();
     if (!query.exec(qryCreateIndexes))
       qWarning() << "ERROR: " << query.lastError().text();
     QDirIterator it2(ui->lePathToSearch->text(),
@@ -330,6 +330,8 @@ int totalFilesToProcess=0;
                     QStringList() << ui->cbFileType->currentText(), QDir::Files,
                     QDirIterator::Subdirectories);
 ui->progressBar->show();
+ui->progressBar->setFormat("Search progress for " + ui->cbFileType->currentText() + " Start" );
+ui->progressBar->setValue(0);
 QApplication::processEvents();
 
     int i = 1;
@@ -379,18 +381,6 @@ QApplication::processEvents();
       } else
         qDebug() << "Can't open file:" << it.filePath();
 
-      //         QFile file(it.filePath());
-      //         QFile file("c:\\Users\\esima\\Downloads\\20181130_153707.jpg");
-      //         qDebug() << file.fileName();
-      //         QByteArray ba;
-      //         // If the selected file is valid, continue with the upload
-
-      //         if (file.open(QIODevice::ReadOnly)) {
-      //             // Read the file and transform the output to a QByteArray
-      //             ba = file.readAll();
-      //         }
-      //         else qDebug() << "could not open " << it.filePath();
-
       QString insertQuery(
           "INSERT INTO files(name, path, size, checksum) VALUES('");
       insertQuery.append(it.fileName().replace("'", "''"));
@@ -412,16 +402,15 @@ QApplication::processEvents();
         qDebug() << "file processed is " << i;
         float progressFraction = ((i*100) / totalFilesToProcess);
         qDebug() << "file progressFraction is " << progressFraction;
-//        ui->progressBar->setValue(int((i/totalFilesToProcess)*100));
         ui->progressBar->setValue(int(progressFraction));
-//        ui->progressBar->update();
+        ui->progressBar->setFormat("Search progress for " + ui->cbFileType->currentText() + " is " + QString::number(progressFraction) + "%" );
         QApplication::processEvents();
       }
     i++;
     }
-ui->progressBar->hide();
     qDebug() << "number of files processed is " << fileList.size();
     db.close();
+    ui->progressBar->hide();
     return fileList.size();
   }
 
@@ -510,18 +499,22 @@ void MomsDuplicateDeleter::deleteDuplicateFilesFromPath(bool simulatedFlag) {
 if (ui->tableDuplicateResultsList->currentRow() > -1){
     unsigned int j = 0;
   QApplication::setOverrideCursor(Qt::WaitCursor);
+  ui->progressBar->show();
+  ui->progressBar->setFormat("Starting delete operation " );
+  ui->progressBar->setValue(0);
+
   QApplication::processEvents();
   const QString DRIVER("QSQLITE");
   if (QSqlDatabase::isDriverAvailable(DRIVER))
     qDebug() << "database driver is installed";
   QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER);
   //     db.setDatabaseName(":memory:");
-  db.setDatabaseName("fileCatalog.db");
+  db.setDatabaseName(databaseFilename);
   if (!db.open())
     qWarning() << "ERROR: " << db.lastError();
   db.transaction();
   unsigned int uniqueFileCount = 0;
-  unsigned int totalSize = 0;
+qint64 totalSize = 0;
   QSqlQuery query4;
   QString sFilePath(ui->tableDuplicateResultsList
                         ->item(ui->tableDuplicateResultsList->currentRow(), 2)
@@ -529,6 +522,7 @@ if (ui->tableDuplicateResultsList->currentRow() > -1){
 
   QString tempQuery(qryCountOfUniqueChecksumsInPath);
   tempQuery.replace(":filePath", sFilePath);
+//  qWarning() << "query used " << tempQuery;
   query4.prepare(tempQuery);
   do {
     if (!query4.exec())
@@ -541,6 +535,7 @@ if (ui->tableDuplicateResultsList->currentRow() > -1){
 
       QString tempQuery2(qryIDRandomDuplicatesFromPath);
       tempQuery2.replace(":filePath", sFilePath);
+//      qWarning() << "query used " << tempQuery2;
       query2.prepare(tempQuery2);
       if (!query2.exec())
         qWarning() << "ERROR: " << query2.lastError().text();
@@ -563,7 +558,7 @@ if (ui->tableDuplicateResultsList->currentRow() > -1){
         if (!query5.exec())
           qWarning() << "ERROR: " << query5.lastError().text();
         else{
-        qDebug() << "rows affected is  " << query5.numRowsAffected();
+ //       qDebug() << "rows affected is  " << query5.numRowsAffected();
         if (!simulatedFlag) {
           QFile removeFile(fileToBeDeleted);
           if (!removeFile.setPermissions(QFile::ReadOther |
@@ -577,12 +572,19 @@ if (ui->tableDuplicateResultsList->currentRow() > -1){
 
           } else
             qDebug() << "File deleted is " << fileToBeDeleted;
-        } else
-          qDebug() << "File that would have been deleted is "
-                   << fileToBeDeleted;
+        }
+//       else   qDebug() << "File that would have been deleted is "
+//                   << fileToBeDeleted;
         //            qDebug() << "random file id result value " <<
         //            uniqueFileID;
         }
+        if (j % 200 == 0){
+          float progressFraction = (j%99);
+          ui->progressBar->setValue(int(progressFraction));
+          ui->progressBar->setFormat("Deleted progress is " + QString::number(progressFraction) + "%" );
+          QApplication::processEvents();
+        }
+
         j++;
       }
     }
@@ -595,6 +597,7 @@ if (ui->tableDuplicateResultsList->currentRow() > -1){
   db.exec("VACUUM");
   db.close();
   QApplication::restoreOverrideCursor();
+  ui->progressBar->hide();
   QApplication::processEvents();
   if (!simulatedFlag) {
       QMessageBox::information( 0, "Delete Operation Stats", QString::number(j) + " File(s) - Total number of file(s) deleted\n" + QString::number(totalSize/1000000) + " MB - Total Space Reclaimed ");
@@ -610,24 +613,28 @@ void MomsDuplicateDeleter::deleteDuplicateFilesNotInPath(bool simulatedFlag) {
     if (ui->tableDuplicateResultsList->currentRow() > -1){
   unsigned int j = 0;
   QApplication::setOverrideCursor(Qt::WaitCursor);
+  ui->progressBar->show();
+  ui->progressBar->setFormat("Starting delete operation " );
+  ui->progressBar->setValue(0);
+
   QApplication::processEvents();
   const QString DRIVER("QSQLITE");
   if (QSqlDatabase::isDriverAvailable(DRIVER))
     qDebug() << "database driver is installed";
   QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER);
   //     db.setDatabaseName(":memory:");
-  db.setDatabaseName("fileCatalog.db");
+  db.setDatabaseName(databaseFilename);
   if (!db.open())
     qWarning() << "ERROR: " << db.lastError();
   db.transaction();
   unsigned int uniqueFileCount = 0;
-  unsigned int totalSize = 0;
+  qint64 totalSize = 0;
   QSqlQuery query4;
   QString sFilePath(ui->tableDuplicateResultsList
                         ->item(ui->tableDuplicateResultsList->currentRow(), 2)
                         ->text());
 
-  QString tempQuery(qryCountOfUniqueChecksumsInPath);
+  QString tempQuery(qryCountOfUniqueChecksumsNotInPath);
   tempQuery.replace(":filePath", sFilePath);
   query4.prepare(tempQuery);
   do {
@@ -637,18 +644,20 @@ void MomsDuplicateDeleter::deleteDuplicateFilesNotInPath(bool simulatedFlag) {
       uniqueFileCount = query4.value("unique_count").toUInt();
     }
     if (uniqueFileCount > 0) {
-      QSqlQuery query2;
+        QSqlQuery query2;
 
-      QString tempQuery2(qryIDRandomDuplicatesNotInPath);
-      tempQuery2.replace(":filePath", sFilePath);
-      query2.prepare(tempQuery2);
-      if (!query2.exec())
-        qWarning() << "ERROR: " << query2.lastError().text();
-      unsigned int uniqueFileID = 0;
-      while (query2.next()) {
-        uniqueFileID = query2.value("id").toUInt();
-        totalSize += query2.value("size").toUInt();
-      }
+        QString tempQuery2(qryIDRandomDuplicatesNotInPath);
+        tempQuery2.replace(":filePath", sFilePath);
+//        qWarning() << "query used " << tempQuery2;
+        query2.prepare(tempQuery2);
+        if (!query2.exec())
+          qWarning() << "ERROR: " << query2.lastError().text();
+        unsigned int uniqueFileID = 0;
+        while (query2.next()) {
+          uniqueFileID = query2.value("id").toUInt();
+          totalSize += query2.value("size").toUInt();
+        }
+        query2.clear();
       QSqlQuery query6;
       query6.prepare(qryFilePath + QString::number(uniqueFileID));
       if (!query6.exec())
@@ -663,7 +672,7 @@ void MomsDuplicateDeleter::deleteDuplicateFilesNotInPath(bool simulatedFlag) {
         if (!query5.exec())
           qWarning() << "ERROR: " << query5.lastError().text();
         else{
-        qDebug() << "rows affected is  " << query5.numRowsAffected();
+//       qDebug() << "rows affected is  " << query5.numRowsAffected();
         if (!simulatedFlag) {
           QFile removeFile(fileToBeDeleted);
           if (!removeFile.setPermissions(QFile::ReadOther |
@@ -675,14 +684,21 @@ void MomsDuplicateDeleter::deleteDuplicateFilesNotInPath(bool simulatedFlag) {
             qWarning() << "ERROR: Removing file  " << fileToBeDeleted;
             qWarning() << "ERROR:  " << removeFile.errorString();
 
-          } else
-            qDebug() << "File deleted is " << fileToBeDeleted;
-        } else
-          qDebug() << "File that would have been deleted is "
-                   << fileToBeDeleted;
+          }
+          //       else     qDebug() << "File deleted is " << fileToBeDeleted;
+        }
+//        else  qDebug() << "File that would have been deleted is "
+//                   << fileToBeDeleted;
         //            qDebug() << "random file id result value " <<
         //            uniqueFileID;
         }
+        if (j % 200 == 0){
+          float progressFraction = (j%99);
+          ui->progressBar->setValue(int(progressFraction));
+          ui->progressBar->setFormat("Deleted progress is " + QString::number(progressFraction) + "%" );
+          QApplication::processEvents();
+        }
+
         j++;
       }
     }
@@ -695,7 +711,14 @@ void MomsDuplicateDeleter::deleteDuplicateFilesNotInPath(bool simulatedFlag) {
   db.exec("VACUUM");
   db.close();
   QApplication::restoreOverrideCursor();
+  ui->progressBar->hide();
   QApplication::processEvents();
+  if (!simulatedFlag) {
+      QMessageBox::information( 0, "Delete Operation Stats", QString::number(j) + " File(s) - Total number of file(s) deleted\n" + QString::number(totalSize/1000000) + " MB - Total Space Reclaimed ");
+  } else{
+      QMessageBox::information( 0, "Simulated Delete Operation Stats", QString::number(j) + " File(s) - Total number of file(s) that would be deleted\n" + QString::number(totalSize/1000000) + " MB - Total Space that would be Reclaimed ");
+  }
+
 }  else      QMessageBox::information( 0, "No Row Selected", "Please select a row with the File Path of the duplicates you want to keep. \nThis will delete the duplicates from all other File Paths that contain duplicated in this path.");
 
 }
@@ -711,7 +734,7 @@ void MomsDuplicateDeleter::on_pbKeepInPath_clicked()
                           ->item(ui->tableDuplicateResultsList->currentRow(), 2)
                           ->text());
     QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "File Delete Operation", "Deleting duplicate files not in\n " + sFilePath + "\nAre you sure you?",
+    reply = QMessageBox::question(this, "Simulating File Delete Operation", "Simulating deleting duplicate files not in\n " + sFilePath + "\nAre you sure you?",
                                   QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
         deleteDuplicateFilesNotInPath(true);
@@ -734,3 +757,7 @@ void MomsDuplicateDeleter::on_pbKeepInPath_clicked()
 }
     }  else      QMessageBox::information( 0, "No Row Selected", "Please select a row with the File Path of the duplicates you want to keep. \nThis will delete the duplicates from all other File Paths that contain duplicated in this path.");
     }
+
+void MomsDuplicateDeleter::DBConnect(){
+
+}

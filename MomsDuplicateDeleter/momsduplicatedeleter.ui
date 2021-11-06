@@ -18,8 +18,8 @@
     <property name="geometry">
      <rect>
       <x>1220</x>
-      <y>110</y>
-      <width>61</width>
+      <y>140</y>
+      <width>141</width>
       <height>21</height>
      </rect>
     </property>
@@ -32,7 +32,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#000000;&quot;&gt;Save Plan List to CVS file&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
-     <string>Export</string>
+     <string>Export File List</string>
     </property>
    </widget>
    <widget class="QComboBox" name="cbFileType">
@@ -48,6 +48,9 @@
      <font>
       <pointsize>10</pointsize>
      </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This pull-down allows you to select particular file extensions to use in the search.  This relates to the type of file, mainly pictures and movies of different common formats.&lt;/p&gt;&lt;p&gt;If you leave it alone, it will search for each extension in the list, except for the *.*.   If you want to scan more that one, but not the whole list, then choose one, then hit search, after it completes, choose another one, then hit search, ....repeat until all desired extentions have been searched for.&lt;/p&gt;&lt;p&gt;If you want to scan all files regardless of extention, then select the *.* entry of the list.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <item>
      <property name="text">
@@ -114,6 +117,9 @@
       <pointsize>10</pointsize>
      </font>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Load Current Duplicates List button will load the list from the database.   This is a way to come back to where you left off and the program ASSUMES  that you din't change any files on your own.  This is very important if you have changed the files, on your own, but still have stale information in the list and you may lose you only copy of a file...  When in doubt, use the Start Over button instead.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
      <string>Load Current Duplicates List</string>
     </property>
@@ -121,10 +127,10 @@
    <widget class="QPushButton" name="pbDeleteFromPath">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>80</y>
-      <width>221</width>
-      <height>28</height>
+      <x>290</x>
+      <y>90</y>
+      <width>251</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="font">
@@ -132,17 +138,21 @@
       <pointsize>10</pointsize>
      </font>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button will take the duplicate files that are in the Directory/Folder column, of the item selected in the list, and delete those files.&lt;/p&gt;&lt;p&gt;For instance, I have copies of my phone pictures several times over the years and they are duplicates of ones that I have already brought over before and sorted through.  Using this button, it will remove all the duplicates in that directory/folder, and then I can sort through what it left, knowing they are not duplicated elsewhere.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
-     <string>Delete from Path Chosen</string>
+     <string>Delete Duplicate files 
+from Directory/Folder Chosen</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pbKeepInPath">
     <property name="geometry">
      <rect>
-      <x>480</x>
-      <y>80</y>
+      <x>30</x>
+      <y>90</y>
       <width>221</width>
-      <height>28</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="font">
@@ -150,8 +160,12 @@
       <pointsize>10</pointsize>
      </font>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button will take the duplicate files that are in the Directory/Folder column, of the item selected in the list,  and delete the duplicates of those files found in any other Directory/Folder.&lt;/p&gt;&lt;p&gt;For instance, I put all my Sand Art Festival pictures, over the years, into one Directory/Folder called SandArt. In the meantime, there are duplicates of those in many other places. I want to keep the ones that I gathered, so I use this buton. First, I select/click a file, from the list, that has SandArt in the Directory/Folder column. Then click this button.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
-     <string>Keep in Path Chosen</string>
+     <string>Keep Duplicate files 
+in Directory/Folder Chosen</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pbSimDelete">
@@ -176,7 +190,7 @@
     <property name="geometry">
      <rect>
       <x>820</x>
-      <y>120</y>
+      <y>150</y>
       <width>391</width>
       <height>16</height>
      </rect>
@@ -194,7 +208,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>120</y>
+      <y>150</y>
       <width>401</width>
       <height>16</height>
      </rect>
@@ -223,7 +237,7 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button allows you to select a directory to search for duplicates in.  This will also search in it's subdirectories.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button allows you to select a directory/folder to search for duplicates in. This will also search in it's subdirectories./subfolder.  &lt;/p&gt;&lt;p&gt; Once the search is complete, you can choose and search another directory/folder to build up a complete list of places that duplicates could be hiding in before starting to use the delete operations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string>...</string>
@@ -243,6 +257,9 @@
       <pointsize>10</pointsize>
      </font>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Search button is used to scan all the files, that meet the criteria in the drop-down to the left and are in the Directory/Folder choosen or it's subdirectories/folders.  This builds a database of information that the program uses to determine if files are duplicates.  &lt;/p&gt;&lt;p&gt;Those duplicates are then presented in the table below.  &lt;/p&gt;&lt;p&gt;From there, you can start cleaning up based on directory/folder using the Keep Duplicate files in Directoy/Folder Chosen or the Delete Duplicate files from Directory/Folder Chosen buttons.&lt;/p&gt;&lt;p&gt;Or, if you are like my mom, just hit the Delete All Dublipcate files Randomly button below and rest easy that you only have one copy left of everything. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
      <string>Search</string>
     </property>
@@ -261,6 +278,9 @@
       <pointsize>10</pointsize>
      </font>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Start Over button will clear the database where the list of files is stored.  This is very important if you have changed the files, on your own, but still have stale information in the list.  For instance, if you delete a file that is a duplicate, on your own and now you only have one opy.  Since you deleted a file without the program, then it remains in the list in the database.  Then when the delete process is engaged, using the list from the database, the program will think there is a duplicate, when there actually isn't and may choose to delete the only copy you have left.  &lt;/p&gt;&lt;p&gt;Bottom line, best practice is to use this Start Over whenever you do things on your own with the files, even moving them...  After hitting the Start Over button, then you will need to scan your files again.  &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
      <string>Start Over</string>
     </property>
@@ -268,10 +288,10 @@
    <widget class="QPushButton" name="pbActualDelete">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>80</y>
-      <width>141</width>
-      <height>28</height>
+      <x>590</x>
+      <y>90</y>
+      <width>201</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="font">
@@ -279,15 +299,19 @@
       <pointsize>10</pointsize>
      </font>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Delete All Duplicate files is a bruteforce, yet simple, way of getting rid of all the duplicates found from the searches.   The catch is that it will do it randomly, sometimes from one directory/folder, sometimes from a different directory/folder. &lt;/p&gt;&lt;p&gt;This was my mom's original request.  The idea is to first get rid of the duplicates, then gather everything into one directory/folder and then sort it out from there.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
-     <string>Delete  Rendomly</string>
+     <string>Delete  All Duplicate files 
+Rendomly</string>
     </property>
    </widget>
    <widget class="QLabel" name="lbNumberOfDuplicateFiles">
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>120</y>
+      <y>150</y>
       <width>281</width>
       <height>16</height>
      </rect>
@@ -318,15 +342,18 @@
       <pointsize>10</pointsize>
      </font>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This area simply shows the Directory/Folder that will be used for the Search operation.  Use the ... button to the right to choose that directory/folder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
-     <string>Choose a directory to search for duplicates in.</string>
+     <string>Type in a directory or choose the ... button</string>
     </property>
    </widget>
    <widget class="QTableWidget" name="tableDuplicateResultsList">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>140</y>
+      <y>170</y>
       <width>1381</width>
       <height>471</height>
      </rect>
@@ -366,14 +393,20 @@
    <widget class="QCheckBox" name="cbSimulateFlag">
     <property name="geometry">
      <rect>
-      <x>870</x>
-      <y>80</y>
-      <width>191</width>
+      <x>850</x>
+      <y>100</y>
+      <width>231</width>
       <height>23</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This checkbox allows for simulating what would happen.  This will prevent removing the files and changing the list in the table, but it gathers stats on how many files would be deleted and how much storage space would be saved.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
-     <string>Simulate Delete</string>
+     <string>Simulate Delete Operations</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>

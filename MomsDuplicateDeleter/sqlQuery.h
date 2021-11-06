@@ -41,6 +41,8 @@
   "group by size having COUNT(size) > 1) group by checksum having "            \
   "COUNT(checksum) > 1) and (path ==':filePath') "
 
+#define qryCountOfUniqueChecksumsNotInPath                                       \
+  "select count(distinct checksum) as unique_count from files where checksum in (SELECT checksum FROM files WHERE checksum IN (SELECT checksum from files WHERE size IN (SELECT size from files  group by size having COUNT(size) > 1) group by checksum having COUNT(checksum) > 1) and (path == ':filePath')) AND (path != ':filePath')"
 #define qryCountTotalFilesProcessed "select count(*) from files"
 #define qryDeleteFileByID "DELETE from files where id == "
 #define qryDeleteRandomDuplicate                                               \
