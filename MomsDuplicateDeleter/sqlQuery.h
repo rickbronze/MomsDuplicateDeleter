@@ -14,6 +14,12 @@
   "group by checksum having COUNT(checksum) > 1) and  (name like "             \
   "':fileType') "                                                              \
   "order by size desc"
+#define qryCountDuplicates                                                    \
+    "select count(*) as count_duplicates FROM files WHERE checksum " \
+    "IN (SELECT checksum from files WHERE  size IN (SELECT size from files  "    \
+    "group by size having COUNT(size) > 1) group by checksum having "            \
+    "COUNT(checksum) > 1)"
+#define qryCountFiles "SELECT count(*) as count_files FROM files"
 #define qryIDRandomDuplicatesFromPath                                          \
   "SELECT id, size FROM files WHERE checksum IN (SELECT checksum from files WHERE "  \
   "size IN (SELECT size from files  group by size having COUNT(size) > 1) "    \

@@ -10,6 +10,7 @@
 #define UI_MOMSDUPLICATEDELETER_H
 
 #include <QtCore/QVariant>
+#include <QtGui/QIcon>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
@@ -56,6 +57,21 @@ public:
         if (MomsDuplicateDeleter->objectName().isEmpty())
             MomsDuplicateDeleter->setObjectName(QString::fromUtf8("MomsDuplicateDeleter"));
         MomsDuplicateDeleter->resize(1516, 600);
+        QIcon icon;
+        QString iconThemeName = QString::fromUtf8("MDD");
+        if (QIcon::hasThemeIcon(iconThemeName)) {
+            icon = QIcon::fromTheme(iconThemeName);
+        } else {
+            icon.addFile(QString::fromUtf8(":/MomsDuplicateDeleterIcon.png"), QSize(), QIcon::Normal, QIcon::Off);
+            icon.addFile(QString::fromUtf8(":/MomsDuplicateDeleterIcon.png"), QSize(), QIcon::Normal, QIcon::On);
+            icon.addFile(QString::fromUtf8(":/MomsDuplicateDeleterIcon.png"), QSize(), QIcon::Disabled, QIcon::Off);
+            icon.addFile(QString::fromUtf8(":/MomsDuplicateDeleterIcon.png"), QSize(), QIcon::Disabled, QIcon::On);
+            icon.addFile(QString::fromUtf8(":/MomsDuplicateDeleterIcon.png"), QSize(), QIcon::Active, QIcon::Off);
+            icon.addFile(QString::fromUtf8(":/MomsDuplicateDeleterIcon.png"), QSize(), QIcon::Active, QIcon::On);
+            icon.addFile(QString::fromUtf8(":/MomsDuplicateDeleterIcon.png"), QSize(), QIcon::Selected, QIcon::Off);
+            icon.addFile(QString::fromUtf8(":/MomsDuplicateDeleterIcon.png"), QSize(), QIcon::Selected, QIcon::On);
+        }
+        MomsDuplicateDeleter->setWindowIcon(icon);
         centralwidget = new QWidget(MomsDuplicateDeleter);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         pbExportFilesList2CSV = new QPushButton(centralwidget);

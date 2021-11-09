@@ -59,5 +59,8 @@ private:
     QVector<QDir> fileList;
     QString databaseFilename;
     Ui::MomsDuplicateDeleter *ui;
+    unsigned int numberOfDupFiles = 0;
+    unsigned int numberOfUniqueFiles = 0;
+    unsigned int numberOfFiles = 0;
 };
 #endif // MOMSDUPLICATEDELETER_H

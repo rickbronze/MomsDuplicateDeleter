@@ -13,6 +13,17 @@
   <property name="windowTitle">
    <string>Mom's Duplicate Deleter</string>
   </property>
+  <property name="windowIcon">
+   <iconset theme="MDD" resource="MDD.qrc">
+    <normaloff>:/MomsDuplicateDeleterIcon.png</normaloff>
+    <normalon>:/MomsDuplicateDeleterIcon.png</normalon>
+    <disabledoff>:/MomsDuplicateDeleterIcon.png</disabledoff>
+    <disabledon>:/MomsDuplicateDeleterIcon.png</disabledon>
+    <activeoff>:/MomsDuplicateDeleterIcon.png</activeoff>
+    <activeon>:/MomsDuplicateDeleterIcon.png</activeon>
+    <selectedoff>:/MomsDuplicateDeleterIcon.png</selectedoff>
+    <selectedon>:/MomsDuplicateDeleterIcon.png</selectedon>:/MomsDuplicateDeleterIcon.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="pbExportFilesList2CSV">
     <property name="geometry">
@@ -189,7 +200,7 @@ in Directory/Folder Chosen</string>
    <widget class="QLabel" name="lbNumberOfUniqueDuplicateFiles">
     <property name="geometry">
      <rect>
-      <x>820</x>
+      <x>420</x>
       <y>150</y>
       <width>391</width>
       <height>16</height>
@@ -207,7 +218,7 @@ in Directory/Folder Chosen</string>
    <widget class="QLabel" name="lbNumberOfFiles">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>930</x>
       <y>150</y>
       <width>401</width>
       <height>16</height>
@@ -310,7 +321,7 @@ Rendomly</string>
    <widget class="QLabel" name="lbNumberOfDuplicateFiles">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>40</x>
       <y>150</y>
       <width>281</width>
       <height>16</height>
@@ -422,6 +433,8 @@ Rendomly</string>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="MDD.qrc"/>
+ </resources>
  <connections/>
 </ui>
