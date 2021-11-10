@@ -4,6 +4,10 @@
 MomsDuplicateDeleter::MomsDuplicateDeleter(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MomsDuplicateDeleter) {
   ui->setupUi(this);
+  //Remove tags not implemented yet
+  ui->tabWidget->removeTab(1);
+  ui->tabWidget->removeTab(2);
+  //Default database name.  Need to add feature to all the user to choose a name or existing db.
   databaseFilename = "duplicateFileList.db";
   ui->pbSearch->setEnabled(false);
   ui->progressBar->hide();
