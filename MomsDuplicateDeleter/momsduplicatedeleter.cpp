@@ -824,3 +824,90 @@ void MomsDuplicateDeleter::on_pbKeepInPath_clicked() {
 // void MomsDuplicateDeleter::DBConnect(){
 
 //}
+
+void MomsDuplicateDeleter::on_pbDeleteSingle_clicked()
+{
+    QString sFilePath(
+        ui->tableDuplicateResultsList
+            ->item(ui->tableDuplicateResultsList->currentRow(), 2)
+            ->text());
+    sFilePath.append("/"+ ui->tableDuplicateResultsList
+                     ->item(ui->tableDuplicateResultsList->currentRow(),1)
+                     ->text() );
+    if (ui->tableDuplicateResultsList->currentRow() > -1) {
+         QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "File Delete Operation",
+                                      "Deleting duplicate file \n " +
+                                          sFilePath + "\nAre you sure you?",
+                                      QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            deleteSingleFile(ui->cbSimulateFlag->isChecked());
+           fillFilesTable();
+        } else {
+          qDebug() << "Operation Cancelled";
+        }
+
+    } else
+      QMessageBox::information(0, "No Row Selected",
+                               "Please select a row with the File Path of the "
+                               "duplicates you want to delete. ");
+}
+
+void MomsDuplicateDeleter::deleteSingleFile(bool simulatedFlag){
+    const QString DRIVER("QSQLITE");
+    if (QSqlDatabase::isDriverAvailable(DRIVER))
+      qDebug() << "database driver is installed";
+    QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER);
+    //     db.setDatabaseName(":memory:");
+    db.setDatabaseName(databaseFilename);
+    if (!db.open())
+      qWarning() << "ERROR: " << db.lastError();
+    db.transaction();
+    QString sFilePath(
+        ui->tableDuplicateResultsList
+            ->item(ui->tableDuplicateResultsList->currentRow(), 2)
+            ->text());
+    sFilePath.append("/"+ ui->tableDuplicateResultsList
+                     ->item(ui->tableDuplicateResultsList->currentRow(),1)
+                     ->text() );
+    QSqlQuery query5;
+    query5.prepare(qryDeleteFileByID + QString::number(ui->tableDuplicateResultsList->item(ui->tableDuplicateResultsList->currentRow(),0)->text().toInt()));
+    if (!query5.exec())
+      qWarning() << "ERROR: " << query5.lastError().text();
+    //        qDebug() << "rows affected is  " << query5.numRowsAffected();
+    else {
+             qDebug() << "rows affected is  " <<
+             query5.numRowsAffected();
+      if (!simulatedFlag) {
+        QFile removeFile(sFilePath);
+        if (!removeFile.setPermissions(QFile::ReadOther |
+                                       QFile::WriteOther)) {
+          qWarning() << "ERROR: setting permissions  " << sFilePath;
+          qWarning() << "ERROR:  " << removeFile.errorString();
+        }
+        if (!removeFile.remove()) {
+          qWarning() << "ERROR: Removing file  " << sFilePath;
+          qWarning() << "ERROR:  " << removeFile.errorString();
+        }
+        else  qDebug() << "file Deleted was " <<
+                  sFilePath;
+
+      }
+    }
+ if (!simulatedFlag) {
+db.commit();
+} else db.rollback();
+db.exec("VACUUM");
+db.close();
+if (!simulatedFlag) {
+QMessageBox::information(
+    0, "Delete Operation Stats", sFilePath + " file deleted");
+} else {
+QMessageBox::information(
+    0, "Simulated Delete Operation Stats",sFilePath + " would have been file deleted");
+
+
+
+}
+fillFilesTable();
+}

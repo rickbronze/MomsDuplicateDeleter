@@ -38,6 +38,7 @@ public:
     void deleteDuplicateFilesFromPath(bool simulatedFlag);
     void deleteDuplicateFilesNotInPath(bool simulatedFlag);
 
+    void deleteSingleFile(bool simulatedFlag);
 private slots:
     void on_pbSelectDirectory_clicked();
 
@@ -54,6 +55,8 @@ private slots:
     void on_pbDeleteFromPath_clicked();
 
     void on_pbKeepInPath_clicked();
+
+    void on_pbDeleteSingle_clicked();
 
 private:
     QVector<QDir> fileList;

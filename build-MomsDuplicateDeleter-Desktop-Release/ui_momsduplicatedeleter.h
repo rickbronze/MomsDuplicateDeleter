@@ -52,6 +52,7 @@ public:
     QCheckBox *cbSimulateFlag;
     QPushButton *pbSimDelete;
     QPushButton *pbSelectDirectory;
+    QPushButton *pbDeleteSingle;
     QWidget *tabGathering;
     QLabel *label;
     QWidget *tabDeleting;
@@ -83,12 +84,12 @@ public:
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         tabWidget = new QTabWidget(centralwidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
-        tabWidget->setGeometry(QRect(0, 10, 1421, 741));
+        tabWidget->setGeometry(QRect(0, 0, 1421, 741));
         tabCleanup = new QWidget();
         tabCleanup->setObjectName(QString::fromUtf8("tabCleanup"));
         pbSearch = new QPushButton(tabCleanup);
         pbSearch->setObjectName(QString::fromUtf8("pbSearch"));
-        pbSearch->setGeometry(QRect(450, 50, 101, 23));
+        pbSearch->setGeometry(QRect(450, 22, 141, 51));
         QFont font;
         font.setPointSize(10);
         pbSearch->setFont(font);
@@ -161,7 +162,7 @@ public:
         pbKeepInPath->setFont(font);
         cbSimulateFlag = new QCheckBox(tabCleanup);
         cbSimulateFlag->setObjectName(QString::fromUtf8("cbSimulateFlag"));
-        cbSimulateFlag->setGeometry(QRect(880, 110, 231, 23));
+        cbSimulateFlag->setGeometry(QRect(620, 50, 231, 23));
         cbSimulateFlag->setChecked(true);
         pbSimDelete = new QPushButton(tabCleanup);
         pbSimDelete->setObjectName(QString::fromUtf8("pbSimDelete"));
@@ -171,6 +172,10 @@ public:
         pbSelectDirectory->setObjectName(QString::fromUtf8("pbSelectDirectory"));
         pbSelectDirectory->setGeometry(QRect(320, 50, 31, 31));
         pbSelectDirectory->setFont(font);
+        pbDeleteSingle = new QPushButton(tabCleanup);
+        pbDeleteSingle->setObjectName(QString::fromUtf8("pbDeleteSingle"));
+        pbDeleteSingle->setGeometry(QRect(860, 100, 191, 51));
+        pbDeleteSingle->setFont(font);
         tabWidget->addTab(tabCleanup, QString());
         tabGathering = new QWidget();
         tabGathering->setObjectName(QString::fromUtf8("tabGathering"));
@@ -208,7 +213,8 @@ public:
 #ifndef QT_NO_TOOLTIP
         pbSearch->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>The Search button is used to scan all the files, that meet the criteria in the drop-down to the left and are in the Directory/Folder choosen or it's subdirectories/folders.  This builds a database of information that the program uses to determine if files are duplicates.  </p><p>Those duplicates are then presented in the table below.  </p><p>From there, you can start cleaning up based on directory/folder using the Keep Duplicate files in Directoy/Folder Chosen or the Delete Duplicate files from Directory/Folder Chosen buttons.</p><p>Or, if you are like my mom, just hit the Delete All Dublipcate files Randomly button below and rest easy that you only have one copy left of everything. </p></body></html>", nullptr));
 #endif // QT_NO_TOOLTIP
-        pbSearch->setText(QApplication::translate("MomsDuplicateDeleter", "Search", nullptr));
+        pbSearch->setText(QApplication::translate("MomsDuplicateDeleter", "Search and Add\n"
+"to calalog", nullptr));
         lbNumberOfDuplicateFiles->setText(QApplication::translate("MomsDuplicateDeleter", "Number of files that are duplicate", nullptr));
         lbNumberOfUniqueDuplicateFiles->setText(QApplication::translate("MomsDuplicateDeleter", "Number of Unique Files that are duplicates", nullptr));
         lbNumberOfFiles->setText(QApplication::translate("MomsDuplicateDeleter", "No Search Performed...", nullptr));
@@ -266,6 +272,11 @@ public:
         pbSelectDirectory->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>This button allows you to select a directory/folder to search for duplicates in. This will also search in it's subdirectories./subfolder.  </p><p> Once the search is complete, you can choose and search another directory/folder to build up a complete list of places that duplicates could be hiding in before starting to use the delete operations.</p></body></html>", nullptr));
 #endif // QT_NO_TOOLTIP
         pbSelectDirectory->setText(QApplication::translate("MomsDuplicateDeleter", "...", nullptr));
+#ifndef QT_NO_TOOLTIP
+        pbDeleteSingle->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>This button will take the duplicate files that are in the Directory/Folder column, of the item selected in the list, and delete those files.</p><p>For instance, I have copies of my phone pictures several times over the years and they are duplicates of ones that I have already brought over before and sorted through.  Using this button, it will remove all the duplicates in that directory/folder, and then I can sort through what it left, knowing they are not duplicated elsewhere.</p></body></html>", nullptr));
+#endif // QT_NO_TOOLTIP
+        pbDeleteSingle->setText(QApplication::translate("MomsDuplicateDeleter", "Delete Chosen \n"
+"Duplicate file", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabCleanup), QApplication::translate("MomsDuplicateDeleter", "File Cleanup", nullptr));
         label->setText(QApplication::translate("MomsDuplicateDeleter", "This area will eventually be a place that you can gather and view all your files in one place", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabGathering), QApplication::translate("MomsDuplicateDeleter", "File Gathering", nullptr));
