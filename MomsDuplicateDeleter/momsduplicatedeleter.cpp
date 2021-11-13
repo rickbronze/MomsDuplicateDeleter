@@ -16,6 +16,7 @@ MomsDuplicateDeleter::MomsDuplicateDeleter(QWidget *parent)
   ui->leUserSubPath->hide();
   ui->tableDuplicateResultsList->setColumnCount(5);
   ui->tableDuplicateResultsList->verticalHeader()->setVisible(false);
+  ui->tabWidget->removeTab(1);
   //    ui->tableDuplicateResultsList->horizontalHeader()->setVisible(true);
   //    ui->tableDuplicateResultsList->setColumnWidth(0, 90);
   //    ui->tableDuplicateResultsList->setColumnWidth(1, 250);
@@ -441,6 +442,9 @@ int MomsDuplicateDeleter::searchForAndInsertFileType() {
 void MomsDuplicateDeleter::on_pbRemoveDB_clicked() {
   QFile file(databaseFilename);
   file.remove();
+  ui->lbNumberOfDuplicateFiles->setText("Database is empty");
+  ui->lbNumberOfUniqueDuplicateFiles->setText("Database is empty");
+  ui->lbNumberOfFiles->setText("Database is empty");
 }
 
 void MomsDuplicateDeleter::on_pbFillTablesFromDB_clicked() { fillFilesTable(); }
