@@ -30,7 +30,7 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>1421</width>
+      <width>1501</width>
       <height>741</height>
      </rect>
     </property>
@@ -86,8 +86,8 @@ to calalog</string>
        <rect>
         <x>10</x>
         <y>180</y>
-        <width>1381</width>
-        <height>471</height>
+        <width>1481</width>
+        <height>511</height>
        </rect>
       </property>
       <property name="font">
@@ -160,8 +160,8 @@ Randomly</string>
      <widget class="QPushButton" name="pbExportFilesList2CSV">
       <property name="geometry">
        <rect>
-        <x>1200</x>
-        <y>150</y>
+        <x>1350</x>
+        <y>10</y>
         <width>141</width>
         <height>21</height>
        </rect>
@@ -301,6 +301,11 @@ from Directory/Folder Chosen</string>
       </item>
       <item>
        <property name="text">
+        <string>*.3g2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>*.*</string>
        </property>
       </item>
@@ -350,9 +355,9 @@ from Directory/Folder Chosen</string>
      <widget class="QLineEdit" name="leUserSubPath">
       <property name="geometry">
        <rect>
-        <x>1200</x>
-        <y>120</y>
-        <width>113</width>
+        <x>1130</x>
+        <y>150</y>
+        <width>191</width>
         <height>25</height>
        </rect>
       </property>
@@ -402,7 +407,7 @@ in Directory/Folder Chosen</string>
       <property name="geometry">
        <rect>
         <x>1340</x>
-        <y>530</y>
+        <y>680</y>
         <width>151</width>
         <height>28</height>
        </rect>
@@ -457,6 +462,55 @@ in Directory/Folder Chosen</string>
       <property name="text">
        <string>Delete Chosen 
 Duplicate file</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbDeleteFromPathBelow">
+      <property name="geometry">
+       <rect>
+        <x>1130</x>
+        <y>90</y>
+        <width>191</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button will take the duplicate files that are in the Directory/Folder specified and below and delete those files.  Specify the base directory/folder in the text box below the button.&lt;/p&gt;&lt;p&gt;For instance, I have copies of complete directory/folder structures on two drives.  This will allow me me to delete them all at once instead of having to pick every directory/folder in the list individually.  Specify the base directory/folder in the text box below the button.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>Delete Duplicate files 
+from Directory/Folder 
+Entered Below</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbViewImage">
+      <property name="geometry">
+       <rect>
+        <x>1010</x>
+        <y>30</y>
+        <width>89</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>View Image</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbViewMovie">
+      <property name="geometry">
+       <rect>
+        <x>1190</x>
+        <y>40</y>
+        <width>89</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>View Movie</string>
       </property>
      </widget>
     </widget>

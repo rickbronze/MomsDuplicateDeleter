@@ -53,6 +53,9 @@ public:
     QPushButton *pbSimDelete;
     QPushButton *pbSelectDirectory;
     QPushButton *pbDeleteSingle;
+    QPushButton *pbDeleteFromPathBelow;
+    QPushButton *pbViewImage;
+    QPushButton *pbViewMovie;
     QWidget *tabGathering;
     QLabel *label;
     QWidget *tabDeleting;
@@ -84,7 +87,7 @@ public:
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         tabWidget = new QTabWidget(centralwidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
-        tabWidget->setGeometry(QRect(0, 0, 1421, 741));
+        tabWidget->setGeometry(QRect(0, 0, 1501, 741));
         tabCleanup = new QWidget();
         tabCleanup->setObjectName(QString::fromUtf8("tabCleanup"));
         pbSearch = new QPushButton(tabCleanup);
@@ -99,7 +102,7 @@ public:
         lbNumberOfDuplicateFiles->setFont(font);
         tableDuplicateResultsList = new QTableWidget(tabCleanup);
         tableDuplicateResultsList->setObjectName(QString::fromUtf8("tableDuplicateResultsList"));
-        tableDuplicateResultsList->setGeometry(QRect(10, 180, 1381, 471));
+        tableDuplicateResultsList->setGeometry(QRect(10, 180, 1481, 511));
         tableDuplicateResultsList->setFont(font);
         tableDuplicateResultsList->setSortingEnabled(true);
         lbNumberOfUniqueDuplicateFiles = new QLabel(tabCleanup);
@@ -116,7 +119,7 @@ public:
         pbActualDelete->setFont(font);
         pbExportFilesList2CSV = new QPushButton(tabCleanup);
         pbExportFilesList2CSV->setObjectName(QString::fromUtf8("pbExportFilesList2CSV"));
-        pbExportFilesList2CSV->setGeometry(QRect(1200, 150, 141, 21));
+        pbExportFilesList2CSV->setGeometry(QRect(1350, 10, 141, 21));
         pbExportFilesList2CSV->setFont(font);
         pbDeleteFromPath = new QPushButton(tabCleanup);
         pbDeleteFromPath->setObjectName(QString::fromUtf8("pbDeleteFromPath"));
@@ -142,6 +145,7 @@ public:
         cbFileType->addItem(QString());
         cbFileType->addItem(QString());
         cbFileType->addItem(QString());
+        cbFileType->addItem(QString());
         cbFileType->setObjectName(QString::fromUtf8("cbFileType"));
         cbFileType->setGeometry(QRect(360, 50, 73, 22));
         cbFileType->setFont(font);
@@ -155,7 +159,7 @@ public:
         pbFillTablesFromDB->setFont(font);
         leUserSubPath = new QLineEdit(tabCleanup);
         leUserSubPath->setObjectName(QString::fromUtf8("leUserSubPath"));
-        leUserSubPath->setGeometry(QRect(1200, 120, 113, 25));
+        leUserSubPath->setGeometry(QRect(1130, 150, 191, 25));
         pbKeepInPath = new QPushButton(tabCleanup);
         pbKeepInPath->setObjectName(QString::fromUtf8("pbKeepInPath"));
         pbKeepInPath->setGeometry(QRect(10, 100, 271, 51));
@@ -166,7 +170,7 @@ public:
         cbSimulateFlag->setChecked(true);
         pbSimDelete = new QPushButton(tabCleanup);
         pbSimDelete->setObjectName(QString::fromUtf8("pbSimDelete"));
-        pbSimDelete->setGeometry(QRect(1340, 530, 151, 28));
+        pbSimDelete->setGeometry(QRect(1340, 680, 151, 28));
         pbSimDelete->setFont(font);
         pbSelectDirectory = new QPushButton(tabCleanup);
         pbSelectDirectory->setObjectName(QString::fromUtf8("pbSelectDirectory"));
@@ -176,6 +180,16 @@ public:
         pbDeleteSingle->setObjectName(QString::fromUtf8("pbDeleteSingle"));
         pbDeleteSingle->setGeometry(QRect(860, 100, 191, 51));
         pbDeleteSingle->setFont(font);
+        pbDeleteFromPathBelow = new QPushButton(tabCleanup);
+        pbDeleteFromPathBelow->setObjectName(QString::fromUtf8("pbDeleteFromPathBelow"));
+        pbDeleteFromPathBelow->setGeometry(QRect(1130, 90, 191, 51));
+        pbDeleteFromPathBelow->setFont(font);
+        pbViewImage = new QPushButton(tabCleanup);
+        pbViewImage->setObjectName(QString::fromUtf8("pbViewImage"));
+        pbViewImage->setGeometry(QRect(1010, 30, 89, 25));
+        pbViewMovie = new QPushButton(tabCleanup);
+        pbViewMovie->setObjectName(QString::fromUtf8("pbViewMovie"));
+        pbViewMovie->setGeometry(QRect(1190, 40, 89, 25));
         tabWidget->addTab(tabCleanup, QString());
         tabGathering = new QWidget();
         tabGathering->setObjectName(QString::fromUtf8("tabGathering"));
@@ -245,7 +259,8 @@ public:
         cbFileType->setItemText(6, QApplication::translate("MomsDuplicateDeleter", "*.jpeg", nullptr));
         cbFileType->setItemText(7, QApplication::translate("MomsDuplicateDeleter", "*.mov", nullptr));
         cbFileType->setItemText(8, QApplication::translate("MomsDuplicateDeleter", "*.bmp", nullptr));
-        cbFileType->setItemText(9, QApplication::translate("MomsDuplicateDeleter", "*.*", nullptr));
+        cbFileType->setItemText(9, QApplication::translate("MomsDuplicateDeleter", "*.3g2", nullptr));
+        cbFileType->setItemText(10, QApplication::translate("MomsDuplicateDeleter", "*.*", nullptr));
 
 #ifndef QT_NO_TOOLTIP
         cbFileType->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>This pull-down allows you to select particular file extensions to use in the search.  This relates to the type of file, mainly pictures and movies of different common formats.</p><p>If you leave it alone, it will search for each extension in the list, except for the *.*.   If you want to scan more that one, but not the whole list, then choose one, then hit search, after it completes, choose another one, then hit search, ....repeat until all desired extentions have been searched for.</p><p>If you want to scan all files regardless of extention, then select the *.* entry of the list.</p></body></html>", nullptr));
@@ -277,6 +292,14 @@ public:
 #endif // QT_NO_TOOLTIP
         pbDeleteSingle->setText(QApplication::translate("MomsDuplicateDeleter", "Delete Chosen \n"
 "Duplicate file", nullptr));
+#ifndef QT_NO_TOOLTIP
+        pbDeleteFromPathBelow->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>This button will take the duplicate files that are in the Directory/Folder specified and below and delete those files.  Specify the base directory/folder in the text box below the button.</p><p>For instance, I have copies of complete directory/folder structures on two drives.  This will allow me me to delete them all at once instead of having to pick every directory/folder in the list individually.  Specify the base directory/folder in the text box below the button.</p></body></html>", nullptr));
+#endif // QT_NO_TOOLTIP
+        pbDeleteFromPathBelow->setText(QApplication::translate("MomsDuplicateDeleter", "Delete Duplicate files \n"
+"from Directory/Folder \n"
+"Entered Below", nullptr));
+        pbViewImage->setText(QApplication::translate("MomsDuplicateDeleter", "View Image", nullptr));
+        pbViewMovie->setText(QApplication::translate("MomsDuplicateDeleter", "View Movie", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabCleanup), QApplication::translate("MomsDuplicateDeleter", "File Cleanup", nullptr));
         label->setText(QApplication::translate("MomsDuplicateDeleter", "This area will eventually be a place that you can gather and view all your files in one place", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabGathering), QApplication::translate("MomsDuplicateDeleter", "File Gathering", nullptr));

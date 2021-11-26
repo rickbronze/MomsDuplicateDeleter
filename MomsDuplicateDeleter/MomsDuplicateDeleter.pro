@@ -19,6 +19,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     CRC32.cpp \
     exif.cpp \
+    imageviewer.cpp \
     main.cpp \
     momsduplicatedeleter.cpp
 
@@ -26,6 +27,7 @@ HEADERS += \
     CRC32.h \
     define.h \
     exif.h \
+    imageviewer.h \
     momsduplicatedeleter.h \
     sqlQuery.h
 
