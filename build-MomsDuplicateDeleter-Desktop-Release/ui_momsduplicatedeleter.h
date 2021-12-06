@@ -186,7 +186,7 @@ public:
         pbDeleteFromPathBelow->setFont(font);
         pbViewImage = new QPushButton(tabCleanup);
         pbViewImage->setObjectName(QString::fromUtf8("pbViewImage"));
-        pbViewImage->setGeometry(QRect(1010, 30, 89, 25));
+        pbViewImage->setGeometry(QRect(1400, 150, 89, 25));
         pbViewMovie = new QPushButton(tabCleanup);
         pbViewMovie->setObjectName(QString::fromUtf8("pbViewMovie"));
         pbViewMovie->setGeometry(QRect(1190, 40, 89, 25));

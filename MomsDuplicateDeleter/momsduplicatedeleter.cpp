@@ -7,6 +7,8 @@ MomsDuplicateDeleter::MomsDuplicateDeleter(QWidget *parent)
   //Remove tags not implemented yet
   ui->tabWidget->removeTab(1);
   ui->tabWidget->removeTab(2);
+  ui->pbExportFilesList2CSV->hide();
+  ui->pbViewMovie->hide();
   //Default database name.  Need to add feature to all the user to choose a name or existing db.
   databaseFilename = "duplicateFileList.db";
   ui->pbSearch->setEnabled(false);

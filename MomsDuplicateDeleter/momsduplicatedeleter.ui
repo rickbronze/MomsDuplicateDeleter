@@ -490,8 +490,8 @@ Entered Below</string>
      <widget class="QPushButton" name="pbViewImage">
       <property name="geometry">
        <rect>
-        <x>1010</x>
-        <y>30</y>
+        <x>1400</x>
+        <y>150</y>
         <width>89</width>
         <height>25</height>
        </rect>
