@@ -7,8 +7,6 @@ MomsDuplicateDeleter::MomsDuplicateDeleter(QWidget *parent)
   //Remove tags not implemented yet
   ui->tabWidget->removeTab(1);
   ui->tabWidget->removeTab(2);
-  ui->pbExportFilesList2CSV->hide();
-  ui->pbViewMovie->hide();
   //Default database name.  Need to add feature to all the user to choose a name or existing db.
   databaseFilename = "duplicateFileList.db";
   ui->pbSearch->setEnabled(false);
@@ -208,11 +206,12 @@ void MomsDuplicateDeleter::fillFilesTable() {
   } while (query2.next());
   //  ui->tableDuplicateResultsList->sortByColumn(3, Qt::DescendingOrder);
   ui->tableDuplicateResultsList->setSortingEnabled(true);
-  ui->tableDuplicateResultsList->resizeColumnsToContents();
-  ui->tableDuplicateResultsList->setColumnWidth(0, 90);
-  ui->tableDuplicateResultsList->setColumnWidth(1, 350);
-  ui->tableDuplicateResultsList->setColumnWidth(2, 700);
-  ui->tableDuplicateResultsList->setColumnWidth(3, 150);
+//  ui->tableDuplicateResultsList->resizeColumnsToContents();
+  ui->tableDuplicateResultsList->hideColumn(0);
+  ui->tableDuplicateResultsList->setColumnWidth(0, 50);
+  ui->tableDuplicateResultsList->setColumnWidth(1, 250);
+  ui->tableDuplicateResultsList->setColumnWidth(2, 610);
+  ui->tableDuplicateResultsList->setColumnWidth(3, 100);
   ui->tableDuplicateResultsList->setColumnWidth(4, 100);
 
   qDebug() << "number of duplicate files processed is " << j;
