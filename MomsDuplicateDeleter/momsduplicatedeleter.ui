@@ -266,6 +266,11 @@ from Directory/Folder Chosen</string>
       </item>
       <item>
        <property name="text">
+        <string>*.png</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>*.mpg</string>
        </property>
       </item>
@@ -334,9 +339,9 @@ from Directory/Folder Chosen</string>
      <widget class="QPushButton" name="pbFillTablesFromDB">
       <property name="geometry">
        <rect>
-        <x>160</x>
+        <x>110</x>
         <y>10</y>
-        <width>231</width>
+        <width>141</width>
         <height>28</height>
        </rect>
       </property>
@@ -349,7 +354,7 @@ from Directory/Folder Chosen</string>
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Load Current Duplicates List button will load the list from the database.   This is a way to come back to where you left off and the program ASSUMES  that you din't change any files on your own.  This is very important if you have changed the files, on your own, but still have stale information in the list and you may lose you only copy of a file...  When in doubt, use the Start Over button instead.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="text">
-       <string>Load Current Duplicates List</string>
+       <string>Load Last Catalog</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="leUserSubPath">
@@ -513,6 +518,27 @@ Entered Below</string>
        <string>View Movie</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="pbVerifyDB">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>10</y>
+        <width>111</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Start Over button will clear the database where the list of files is stored.  This is very important if you have changed the files, on your own, but still have stale information in the list.  For instance, if you delete a file that is a duplicate, on your own and now you only have one opy.  Since you deleted a file without the program, then it remains in the list in the database.  Then when the delete process is engaged, using the list from the database, the program will think there is a duplicate, when there actually isn't and may choose to delete the only copy you have left.  &lt;/p&gt;&lt;p&gt;Bottom line, best practice is to use this Start Over whenever you do things on your own with the files, even moving them...  After hitting the Start Over button, then you will need to scan your files again.  &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>Verify Catalog</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tabGathering">
      <attribute name="title">
@@ -561,7 +587,7 @@ Entered Below</string>
      <x>0</x>
      <y>0</y>
      <width>1025</width>
-     <height>34</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

@@ -42,6 +42,7 @@ public:
     void deleteSingleFile(bool simulatedFlag);
     void deleteDuplicateFilesFromPathAndBelow(bool simulatedFlag);
     ImageViewer imageViewer;
+    bool fileExists(QString path);
 private slots:
     void on_pbSelectDirectory_clicked();
 
@@ -66,6 +67,8 @@ private slots:
     void on_pbViewImage_clicked();
 
     void on_pbViewMovie_clicked();
+
+    void on_pbVerifyDB_clicked();
 
 private:
     QVector<QDir> fileList;

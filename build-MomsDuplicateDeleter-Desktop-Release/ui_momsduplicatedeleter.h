@@ -56,6 +56,7 @@ public:
     QPushButton *pbDeleteFromPathBelow;
     QPushButton *pbViewImage;
     QPushButton *pbViewMovie;
+    QPushButton *pbVerifyDB;
     QWidget *tabGathering;
     QLabel *label;
     QWidget *tabDeleting;
@@ -146,6 +147,7 @@ public:
         cbFileType->addItem(QString());
         cbFileType->addItem(QString());
         cbFileType->addItem(QString());
+        cbFileType->addItem(QString());
         cbFileType->setObjectName(QString::fromUtf8("cbFileType"));
         cbFileType->setGeometry(QRect(360, 50, 73, 22));
         cbFileType->setFont(font);
@@ -155,7 +157,7 @@ public:
         pbRemoveDB->setFont(font);
         pbFillTablesFromDB = new QPushButton(tabCleanup);
         pbFillTablesFromDB->setObjectName(QString::fromUtf8("pbFillTablesFromDB"));
-        pbFillTablesFromDB->setGeometry(QRect(160, 10, 231, 28));
+        pbFillTablesFromDB->setGeometry(QRect(110, 10, 141, 28));
         pbFillTablesFromDB->setFont(font);
         leUserSubPath = new QLineEdit(tabCleanup);
         leUserSubPath->setObjectName(QString::fromUtf8("leUserSubPath"));
@@ -190,6 +192,10 @@ public:
         pbViewMovie = new QPushButton(tabCleanup);
         pbViewMovie->setObjectName(QString::fromUtf8("pbViewMovie"));
         pbViewMovie->setGeometry(QRect(1100, 40, 141, 25));
+        pbVerifyDB = new QPushButton(tabCleanup);
+        pbVerifyDB->setObjectName(QString::fromUtf8("pbVerifyDB"));
+        pbVerifyDB->setGeometry(QRect(260, 10, 111, 28));
+        pbVerifyDB->setFont(font);
         tabWidget->addTab(tabCleanup, QString());
         tabGathering = new QWidget();
         tabGathering->setObjectName(QString::fromUtf8("tabGathering"));
@@ -207,7 +213,7 @@ public:
         MomsDuplicateDeleter->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MomsDuplicateDeleter);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 1025, 34));
+        menubar->setGeometry(QRect(0, 0, 1025, 22));
         MomsDuplicateDeleter->setMenuBar(menubar);
         statusbar = new QStatusBar(MomsDuplicateDeleter);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
@@ -252,15 +258,16 @@ public:
         lePathToSearch->setText(QApplication::translate("MomsDuplicateDeleter", "Type in a directory or choose the ... button", nullptr));
         cbFileType->setItemText(0, QApplication::translate("MomsDuplicateDeleter", "*.", nullptr));
         cbFileType->setItemText(1, QApplication::translate("MomsDuplicateDeleter", "*.jpg", nullptr));
-        cbFileType->setItemText(2, QApplication::translate("MomsDuplicateDeleter", "*.mpg", nullptr));
-        cbFileType->setItemText(3, QApplication::translate("MomsDuplicateDeleter", "*.mp4", nullptr));
-        cbFileType->setItemText(4, QApplication::translate("MomsDuplicateDeleter", "*.mpeg", nullptr));
-        cbFileType->setItemText(5, QApplication::translate("MomsDuplicateDeleter", "*.avi", nullptr));
-        cbFileType->setItemText(6, QApplication::translate("MomsDuplicateDeleter", "*.jpeg", nullptr));
-        cbFileType->setItemText(7, QApplication::translate("MomsDuplicateDeleter", "*.mov", nullptr));
-        cbFileType->setItemText(8, QApplication::translate("MomsDuplicateDeleter", "*.bmp", nullptr));
-        cbFileType->setItemText(9, QApplication::translate("MomsDuplicateDeleter", "*.3g2", nullptr));
-        cbFileType->setItemText(10, QApplication::translate("MomsDuplicateDeleter", "*.*", nullptr));
+        cbFileType->setItemText(2, QApplication::translate("MomsDuplicateDeleter", "*.png", nullptr));
+        cbFileType->setItemText(3, QApplication::translate("MomsDuplicateDeleter", "*.mpg", nullptr));
+        cbFileType->setItemText(4, QApplication::translate("MomsDuplicateDeleter", "*.mp4", nullptr));
+        cbFileType->setItemText(5, QApplication::translate("MomsDuplicateDeleter", "*.mpeg", nullptr));
+        cbFileType->setItemText(6, QApplication::translate("MomsDuplicateDeleter", "*.avi", nullptr));
+        cbFileType->setItemText(7, QApplication::translate("MomsDuplicateDeleter", "*.jpeg", nullptr));
+        cbFileType->setItemText(8, QApplication::translate("MomsDuplicateDeleter", "*.mov", nullptr));
+        cbFileType->setItemText(9, QApplication::translate("MomsDuplicateDeleter", "*.bmp", nullptr));
+        cbFileType->setItemText(10, QApplication::translate("MomsDuplicateDeleter", "*.3g2", nullptr));
+        cbFileType->setItemText(11, QApplication::translate("MomsDuplicateDeleter", "*.*", nullptr));
 
 #ifndef QT_NO_TOOLTIP
         cbFileType->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>This pull-down allows you to select particular file extensions to use in the search.  This relates to the type of file, mainly pictures and movies of different common formats.</p><p>If you leave it alone, it will search for each extension in the list, except for the *.*.   If you want to scan more that one, but not the whole list, then choose one, then hit search, after it completes, choose another one, then hit search, ....repeat until all desired extentions have been searched for.</p><p>If you want to scan all files regardless of extention, then select the *.* entry of the list.</p></body></html>", nullptr));
@@ -272,7 +279,7 @@ public:
 #ifndef QT_NO_TOOLTIP
         pbFillTablesFromDB->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>The Load Current Duplicates List button will load the list from the database.   This is a way to come back to where you left off and the program ASSUMES  that you din't change any files on your own.  This is very important if you have changed the files, on your own, but still have stale information in the list and you may lose you only copy of a file...  When in doubt, use the Start Over button instead.</p></body></html>", nullptr));
 #endif // QT_NO_TOOLTIP
-        pbFillTablesFromDB->setText(QApplication::translate("MomsDuplicateDeleter", "Load Current Duplicates List", nullptr));
+        pbFillTablesFromDB->setText(QApplication::translate("MomsDuplicateDeleter", "Load Last Catalog", nullptr));
 #ifndef QT_NO_TOOLTIP
         pbKeepInPath->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>This button will take the duplicate files that are in the Directory/Folder column, of the item selected in the list,  and delete the duplicates of those files found in any other Directory/Folder.</p><p>For instance, I put all my Sand Art Festival pictures, over the years, into one Directory/Folder called SandArt. In the meantime, there are duplicates of those in many other places. I want to keep the ones that I gathered, so I use this buton. First, I select/click a file, from the list, that has SandArt in the Directory/Folder column. Then click this button.</p></body></html>", nullptr));
 #endif // QT_NO_TOOLTIP
@@ -300,6 +307,10 @@ public:
 "Entered Below", nullptr));
         pbViewImage->setText(QApplication::translate("MomsDuplicateDeleter", "View Image", nullptr));
         pbViewMovie->setText(QApplication::translate("MomsDuplicateDeleter", "View Movie", nullptr));
+#ifndef QT_NO_TOOLTIP
+        pbVerifyDB->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>The Start Over button will clear the database where the list of files is stored.  This is very important if you have changed the files, on your own, but still have stale information in the list.  For instance, if you delete a file that is a duplicate, on your own and now you only have one opy.  Since you deleted a file without the program, then it remains in the list in the database.  Then when the delete process is engaged, using the list from the database, the program will think there is a duplicate, when there actually isn't and may choose to delete the only copy you have left.  </p><p>Bottom line, best practice is to use this Start Over whenever you do things on your own with the files, even moving them...  After hitting the Start Over button, then you will need to scan your files again.  </p></body></html>", nullptr));
+#endif // QT_NO_TOOLTIP
+        pbVerifyDB->setText(QApplication::translate("MomsDuplicateDeleter", "Verify Catalog", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabCleanup), QApplication::translate("MomsDuplicateDeleter", "File Cleanup", nullptr));
         label->setText(QApplication::translate("MomsDuplicateDeleter", "This area will eventually be a place that you can gather and view all your files in one place", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabGathering), QApplication::translate("MomsDuplicateDeleter", "File Gathering", nullptr));
