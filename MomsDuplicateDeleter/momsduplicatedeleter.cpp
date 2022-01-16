@@ -5,8 +5,8 @@ MomsDuplicateDeleter::MomsDuplicateDeleter(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MomsDuplicateDeleter) {
   ui->setupUi(this);
   // Remove tags not implemented yet
+  //  ui->tabWidget->removeTab(2);
   ui->tabWidget->removeTab(1);
-  ui->tabWidget->removeTab(2);
   // Default database name.  Need to add feature to all the user to choose a
   // name or existing db.
   databaseFilename = "duplicateFileList.db";
@@ -17,6 +17,8 @@ MomsDuplicateDeleter::MomsDuplicateDeleter(QWidget *parent)
   //  ui->leUserSubPath->hide();
   ui->tableDuplicateResultsList->setColumnCount(5);
   ui->tableDuplicateResultsList->verticalHeader()->setVisible(false);
+  ui->tableExclusiveResultsList->setColumnCount(5);
+  ui->tableExclusiveResultsList->verticalHeader()->setVisible(false);
   ui->tabWidget->removeTab(1);
   //    ui->tableDuplicateResultsList->horizontalHeader()->setVisible(true);
   QStringList m_TableHeader;
@@ -26,6 +28,7 @@ MomsDuplicateDeleter::MomsDuplicateDeleter(QWidget *parent)
                 << "File Size"
                 << "CRC";
   ui->tableDuplicateResultsList->setHorizontalHeaderLabels(m_TableHeader);
+  ui->tableExclusiveResultsList->setHorizontalHeaderLabels(m_TableHeader);
   //    ui->tableDuplicateResultsList->horizontalHeader()->setDefaultAlignment(
   //        Qt::AlignLeft);
   //    QString headerStyleSheet = "::section {" // "QHeaderView::section {"
@@ -160,7 +163,86 @@ void MomsDuplicateDeleter::deleteDuplicateFiles(bool simulatedFlag) {
             " MB - Total Space that would be Reclaimed ");
   }
 }
-void MomsDuplicateDeleter::fillFilesTable() {
+void MomsDuplicateDeleter::fillUniqueFilesTable() {
+  const QString DRIVER("QSQLITE");
+  ui->cbFileType->setCurrentIndex(0);
+  if (QSqlDatabase::isDriverAvailable(DRIVER))
+    qDebug() << "database driver is installed";
+  QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER);
+  //     db.setDatabaseName(":memory:");
+  db.setDatabaseName(databaseFilename);
+  if (!db.open())
+    qWarning() << "ERROR: " << db.lastError();
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  QApplication::processEvents();
+  QSqlQuery query2;
+  QString sFileType(ui->cbFileType->currentText());
+  sFileType.replace("*.", "%");
+  QString tempQuery(qrySelectUniques);
+  tempQuery.replace(":fileType", sFileType);
+  query2.prepare(tempQuery);
+  //  query2.bindValue(":fileType", sFileType);
+  if (!query2.exec())
+    qWarning() << "ERROR: " << query2.lastError().text();
+  qWarning() << "Last Query was " << sFileType;
+  query2.first();
+  int j = 0;
+  ui->tableExclusiveResultsList->setRowCount(0);
+  ui->tableExclusiveResultsList->setSortingEnabled(false);
+  do {
+    j++;
+    ui->tableExclusiveResultsList->insertRow(
+        ui->tableExclusiveResultsList->rowCount());
+    ui->tableExclusiveResultsList->setItem(
+        ui->tableExclusiveResultsList->rowCount() - 1, 0,
+        new QTableWidgetItem(query2.value("id").toString()));
+    ui->tableExclusiveResultsList->setItem(
+        ui->tableExclusiveResultsList->rowCount() - 1, 1,
+        new QTableWidgetItem(query2.value("name").toString()));
+    ui->tableExclusiveResultsList->setItem(
+        ui->tableExclusiveResultsList->rowCount() - 1, 2,
+        new QTableWidgetItem(query2.value("path").toString()));
+    ui->tableExclusiveResultsList->setItem(
+        ui->tableExclusiveResultsList->rowCount() - 1, 3,
+        new QTableWidgetItem(query2.value("size").toString()));
+    ui->tableExclusiveResultsList->setItem(
+        ui->tableExclusiveResultsList->rowCount() - 1, 4,
+        new QTableWidgetItem(query2.value("checksum").toString()));
+  } while (query2.next());
+  //  ui->tableExclusiveResultsList->sortByColumn(3, Qt::DescendingOrder);
+  ui->tableExclusiveResultsList->setSortingEnabled(true);
+  //  ui->tableExclusiveResultsList->resizeColumnsToContents();
+  ui->tableExclusiveResultsList->hideColumn(0);
+  ui->tableExclusiveResultsList->setColumnWidth(0, 50);
+  ui->tableExclusiveResultsList->setColumnWidth(1, 250);
+  ui->tableExclusiveResultsList->setColumnWidth(2, 610);
+  ui->tableExclusiveResultsList->setColumnWidth(3, 100);
+  ui->tableExclusiveResultsList->setColumnWidth(4, 100);
+
+  qDebug() << "number of unique files processed is " << j;
+  QSqlQuery query5;
+  if (!query5.prepare(qryCountUniques))
+    qWarning() << "ERROR preparing: " << query5.lastError().text();
+
+  if (!query5.exec())
+    qWarning() << "ERROR: " << query5.lastError().text();
+  while (query5.next()) {
+    ui->lbNumberOfUniqueFiles->setText(
+        query5.value("count_uniques").toString() +
+        "    Files that are not duplicates");
+    numberOfUniqueFiles = query5.value("count_uniques").toUInt();
+    qDebug() << "unique count returned value is "
+             << query5.value("count_uniques").toUInt();
+  }
+
+  db.exec("VACUUM");
+
+  db.close();
+  QApplication::restoreOverrideCursor();
+  QApplication::processEvents();
+}
+
+void MomsDuplicateDeleter::fillDuplicateFilesTable() {
   const QString DRIVER("QSQLITE");
   ui->cbFileType->setCurrentIndex(0);
   if (QSqlDatabase::isDriverAvailable(DRIVER))
@@ -279,7 +361,7 @@ void MomsDuplicateDeleter::on_pbSearch_clicked() {
       "Total number of files processed (for this search) is " +
       QString::number(totalFilesProcessedInThisSearch));
 
-  fillFilesTable();
+  fillDuplicateFilesTable();
   //  fillDirectoriesTable();
   QApplication::restoreOverrideCursor();
   QApplication::processEvents();
@@ -452,7 +534,10 @@ void MomsDuplicateDeleter::on_pbRemoveDB_clicked() {
   ui->lbNumberOfFiles->setText("Database is empty");
 }
 
-void MomsDuplicateDeleter::on_pbFillTablesFromDB_clicked() { fillFilesTable(); }
+void MomsDuplicateDeleter::on_pbFillTablesFromDB_clicked() {
+  fillDuplicateFilesTable();
+  fillUniqueFilesTable();
+}
 
 void MomsDuplicateDeleter::on_pbSimDelete_clicked() {
   deleteDuplicateFiles(true);
@@ -467,7 +552,7 @@ void MomsDuplicateDeleter::on_pbActualDelete_clicked() {
         QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
       deleteDuplicateFiles(true);
-      fillFilesTable();
+      fillDuplicateFilesTable();
     } else {
       qDebug() << "Operation Cancelled";
     }
@@ -481,7 +566,7 @@ void MomsDuplicateDeleter::on_pbActualDelete_clicked() {
         QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
       deleteDuplicateFiles(false);
-      fillFilesTable();
+      fillDuplicateFilesTable();
     } else {
       qDebug() << "Operation Cancelled";
     }
@@ -503,7 +588,7 @@ void MomsDuplicateDeleter::on_pbDeleteFromPath_clicked() {
                                 QMessageBox::Yes | QMessageBox::No);
       if (reply == QMessageBox::Yes) {
         deleteDuplicateFilesFromPath(true);
-        fillFilesTable();
+        fillDuplicateFilesTable();
       } else {
         qDebug() << "Operation Cancelled";
       }
@@ -521,7 +606,7 @@ void MomsDuplicateDeleter::on_pbDeleteFromPath_clicked() {
                                     QMessageBox::Yes | QMessageBox::No);
       if (reply == QMessageBox::Yes) {
         deleteDuplicateFilesFromPath(false);
-        fillFilesTable();
+        fillDuplicateFilesTable();
       } else {
         qDebug() << "Operation Cancelled";
       }
@@ -924,7 +1009,7 @@ void MomsDuplicateDeleter::on_pbKeepInPath_clicked() {
           QMessageBox::Yes | QMessageBox::No);
       if (reply == QMessageBox::Yes) {
         deleteDuplicateFilesNotInPath(true);
-        fillFilesTable();
+        fillDuplicateFilesTable();
       } else {
         qDebug() << "Operation Cancelled";
       }
@@ -940,7 +1025,7 @@ void MomsDuplicateDeleter::on_pbKeepInPath_clicked() {
                                     QMessageBox::Yes | QMessageBox::No);
       if (reply == QMessageBox::Yes) {
         deleteDuplicateFilesNotInPath(false);
-        fillFilesTable();
+        fillDuplicateFilesTable();
       } else {
         qDebug() << "Operation Cancelled";
       }
@@ -973,7 +1058,7 @@ void MomsDuplicateDeleter::on_pbDeleteSingle_clicked() {
                                   QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
       deleteSingleFile(ui->cbSimulateFlag->isChecked());
-      fillFilesTable();
+      fillDuplicateFilesTable();
     } else {
       qDebug() << "Operation Cancelled";
     }
@@ -1039,7 +1124,7 @@ void MomsDuplicateDeleter::deleteSingleFile(bool simulatedFlag) {
     QMessageBox::information(0, "Simulated Delete Operation Stats",
                              sFilePath + " would have been file deleted");
   }
-  fillFilesTable();
+  fillDuplicateFilesTable();
 }
 
 void MomsDuplicateDeleter::on_pbDeleteFromPathBelow_clicked() {
@@ -1054,7 +1139,7 @@ void MomsDuplicateDeleter::on_pbDeleteFromPathBelow_clicked() {
           QMessageBox::Yes | QMessageBox::No);
       if (reply == QMessageBox::Yes) {
         deleteDuplicateFilesFromPathAndBelow(true);
-        fillFilesTable();
+        fillDuplicateFilesTable();
       } else {
         qDebug() << "Operation Cancelled";
       }
@@ -1070,7 +1155,7 @@ void MomsDuplicateDeleter::on_pbDeleteFromPathBelow_clicked() {
                                 QMessageBox::Yes | QMessageBox::No);
       if (reply == QMessageBox::Yes) {
         deleteDuplicateFilesFromPathAndBelow(false);
-        fillFilesTable();
+        fillDuplicateFilesTable();
       } else {
         qDebug() << "Operation Cancelled";
       }
@@ -1135,8 +1220,10 @@ bool MomsDuplicateDeleter::fileExists(QString path) {
 void MomsDuplicateDeleter::on_pbVerifyDB_clicked() {
   bool errorDetected = false;
   QString failedFile;
-  fillFilesTable();
+  fillDuplicateFilesTable();
   if (ui->tableDuplicateResultsList->rowCount() > 1) {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::processEvents();
     for (int row = 0; row < ui->tableDuplicateResultsList->rowCount(); row++) {
       QString sFilePath(ui->tableDuplicateResultsList->item(row, 2)->text());
       sFilePath.append("/" +
@@ -1147,6 +1234,8 @@ void MomsDuplicateDeleter::on_pbVerifyDB_clicked() {
         break;
       }
     }
+    QApplication::restoreOverrideCursor();
+
     if (errorDetected) {
 
       QMessageBox::critical(
@@ -1171,4 +1260,27 @@ void MomsDuplicateDeleter::on_pbVerifyDB_clicked() {
         "No Files in list, either create a catalog or load the last one using "
         "the appropriate controls. ");
   }
+}
+
+void MomsDuplicateDeleter::on_pbViewImage_2_clicked() {
+  if (ui->tableExclusiveResultsList->currentRow() > -1) {
+    QString sFilePath(ui->tableExclusiveResultsList
+                          ->item(ui->tableExclusiveResultsList->currentRow(), 2)
+                          ->text());
+    sFilePath.append("/" +
+                     ui->tableExclusiveResultsList
+                         ->item(ui->tableExclusiveResultsList->currentRow(), 1)
+                         ->text());
+    imageViewer.show();
+    imageViewer.loadFile(sFilePath);
+    imageViewer.setVisible(true);
+
+  } else
+    QMessageBox::information(0, "No Row Selected",
+                             "Please select a row with the "
+                             "image file you want to view. ");
+}
+
+void MomsDuplicateDeleter::on_pbFillTablesFromDB_2_clicked() {
+  on_pbFillTablesFromDB_clicked();
 }

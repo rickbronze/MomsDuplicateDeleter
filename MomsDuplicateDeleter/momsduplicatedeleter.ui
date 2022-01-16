@@ -45,9 +45,9 @@
       <property name="geometry">
        <rect>
         <x>450</x>
-        <y>22</y>
+        <y>32</y>
         <width>141</width>
-        <height>51</height>
+        <height>41</height>
        </rect>
       </property>
       <property name="font">
@@ -576,6 +576,81 @@ Entered Below</string>
       </property>
       <property name="text">
        <string>This tab will be an area for viewing the different files.</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tabExclusiveFiles">
+     <attribute name="title">
+      <string>Exclusive File List</string>
+     </attribute>
+     <widget class="QTableWidget" name="tableExclusiveResultsList">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>981</width>
+        <height>341</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbFillTablesFromDB_2">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>10</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Load Current Duplicates List button will load the list from the database.   This is a way to come back to where you left off and the program ASSUMES  that you din't change any files on your own.  This is very important if you have changed the files, on your own, but still have stale information in the list and you may lose you only copy of a file...  When in doubt, use the Start Over button instead.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>Load Last Catalog</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbViewImage_2">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>10</y>
+        <width>151</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>View Image</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lbNumberOfUniqueFiles">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>40</y>
+        <width>281</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Number of files that are not duplicate</string>
       </property>
      </widget>
     </widget>
