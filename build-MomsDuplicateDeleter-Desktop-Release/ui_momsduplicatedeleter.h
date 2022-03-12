@@ -61,6 +61,11 @@ public:
     QLabel *label;
     QWidget *tabDeleting;
     QLabel *label_2;
+    QWidget *tabExclusiveFiles;
+    QTableWidget *tableExclusiveResultsList;
+    QPushButton *pbFillTablesFromDB_2;
+    QPushButton *pbViewImage_2;
+    QLabel *lbNumberOfUniqueFiles;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -93,7 +98,7 @@ public:
         tabCleanup->setObjectName(QString::fromUtf8("tabCleanup"));
         pbSearch = new QPushButton(tabCleanup);
         pbSearch->setObjectName(QString::fromUtf8("pbSearch"));
-        pbSearch->setGeometry(QRect(450, 22, 141, 51));
+        pbSearch->setGeometry(QRect(450, 32, 141, 41));
         QFont font;
         font.setPointSize(10);
         pbSearch->setFont(font);
@@ -210,6 +215,25 @@ public:
         label_2->setObjectName(QString::fromUtf8("label_2"));
         label_2->setGeometry(QRect(240, 260, 651, 201));
         tabWidget->addTab(tabDeleting, QString());
+        tabExclusiveFiles = new QWidget();
+        tabExclusiveFiles->setObjectName(QString::fromUtf8("tabExclusiveFiles"));
+        tableExclusiveResultsList = new QTableWidget(tabExclusiveFiles);
+        tableExclusiveResultsList->setObjectName(QString::fromUtf8("tableExclusiveResultsList"));
+        tableExclusiveResultsList->setGeometry(QRect(10, 70, 981, 471));
+        tableExclusiveResultsList->setFont(font);
+        tableExclusiveResultsList->setSortingEnabled(true);
+        pbFillTablesFromDB_2 = new QPushButton(tabExclusiveFiles);
+        pbFillTablesFromDB_2->setObjectName(QString::fromUtf8("pbFillTablesFromDB_2"));
+        pbFillTablesFromDB_2->setGeometry(QRect(20, 10, 141, 28));
+        pbFillTablesFromDB_2->setFont(font);
+        pbViewImage_2 = new QPushButton(tabExclusiveFiles);
+        pbViewImage_2->setObjectName(QString::fromUtf8("pbViewImage_2"));
+        pbViewImage_2->setGeometry(QRect(190, 10, 151, 25));
+        lbNumberOfUniqueFiles = new QLabel(tabExclusiveFiles);
+        lbNumberOfUniqueFiles->setObjectName(QString::fromUtf8("lbNumberOfUniqueFiles"));
+        lbNumberOfUniqueFiles->setGeometry(QRect(20, 50, 281, 16));
+        lbNumberOfUniqueFiles->setFont(font);
+        tabWidget->addTab(tabExclusiveFiles, QString());
         MomsDuplicateDeleter->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MomsDuplicateDeleter);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -316,6 +340,13 @@ public:
         tabWidget->setTabText(tabWidget->indexOf(tabGathering), QApplication::translate("MomsDuplicateDeleter", "File Gathering", nullptr));
         label_2->setText(QApplication::translate("MomsDuplicateDeleter", "This tab will be an area for viewing the different files.", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabDeleting), QApplication::translate("MomsDuplicateDeleter", "File Viewing/Deleting", nullptr));
+#ifndef QT_NO_TOOLTIP
+        pbFillTablesFromDB_2->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>The Load Current Duplicates List button will load the list from the database.   This is a way to come back to where you left off and the program ASSUMES  that you din't change any files on your own.  This is very important if you have changed the files, on your own, but still have stale information in the list and you may lose you only copy of a file...  When in doubt, use the Start Over button instead.</p></body></html>", nullptr));
+#endif // QT_NO_TOOLTIP
+        pbFillTablesFromDB_2->setText(QApplication::translate("MomsDuplicateDeleter", "Load Last Catalog", nullptr));
+        pbViewImage_2->setText(QApplication::translate("MomsDuplicateDeleter", "View Image", nullptr));
+        lbNumberOfUniqueFiles->setText(QApplication::translate("MomsDuplicateDeleter", "Number of files that are not duplicate", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(tabExclusiveFiles), QApplication::translate("MomsDuplicateDeleter", "Exclusive File List", nullptr));
     } // retranslateUi
 
 };

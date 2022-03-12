@@ -1224,7 +1224,13 @@ void MomsDuplicateDeleter::on_pbVerifyDB_clicked() {
   if (ui->tableDuplicateResultsList->rowCount() > 1) {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QApplication::processEvents();
+    ui->progressBar->show();
+    ui->progressBar->setFormat("Starting delete operation ");
+    ui->progressBar->setValue(0);
+    QApplication::processEvents();
     for (int row = 0; row < ui->tableDuplicateResultsList->rowCount(); row++) {
+      float progressFraction =
+          ((row * 100) / ui->tableDuplicateResultsList->rowCount());
       QString sFilePath(ui->tableDuplicateResultsList->item(row, 2)->text());
       sFilePath.append("/" +
                        ui->tableDuplicateResultsList->item(row, 1)->text());
@@ -1233,7 +1239,12 @@ void MomsDuplicateDeleter::on_pbVerifyDB_clicked() {
         failedFile = sFilePath;
         break;
       }
+      ui->progressBar->setValue(int(progressFraction));
+      ui->progressBar->setFormat("Verify progress is " +
+                                 QString::number(progressFraction) + "%");
+      QApplication::processEvents();
     }
+    ui->progressBar->hide();
     QApplication::restoreOverrideCursor();
 
     if (errorDetected) {

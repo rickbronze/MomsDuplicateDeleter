@@ -587,9 +587,9 @@ Entered Below</string>
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>60</y>
+        <y>70</y>
         <width>981</width>
-        <height>341</height>
+        <height>471</height>
        </rect>
       </property>
       <property name="font">
@@ -639,7 +639,7 @@ Entered Below</string>
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>40</y>
+        <y>50</y>
         <width>281</width>
         <height>16</height>
        </rect>
