@@ -45,6 +45,7 @@ public:
   ImageViewer imageViewer;
   bool fileExists(QString path);
   void fillUniqueFilesTable();
+  bool removeEmptyDirectory(QString);
 private slots:
   void on_pbSelectDirectory_clicked();
 

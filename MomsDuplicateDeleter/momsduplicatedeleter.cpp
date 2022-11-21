@@ -29,22 +29,24 @@ MomsDuplicateDeleter::MomsDuplicateDeleter(QWidget *parent)
                 << "CRC";
   ui->tableDuplicateResultsList->setHorizontalHeaderLabels(m_TableHeader);
   ui->tableExclusiveResultsList->setHorizontalHeaderLabels(m_TableHeader);
-  //    ui->tableDuplicateResultsList->horizontalHeader()->setDefaultAlignment(
-  //        Qt::AlignLeft);
-  //    QString headerStyleSheet = "::section {" // "QHeaderView::section {"
-  //                               "background-color: black;"
-  //                               "color: white;"
-  //                               "border: 2px solid black;"
-  //                               "margin: 1px;"
-  //                               "text-align: left;"
-  //                               "font-family: Source Sans Pro;"
-  //                               "font-size: 40px; "
-  //                               "font-weight: 400;}";
-  //    ui->tableDuplicateResultsList->horizontalHeader()->setStyleSheet(
-  //        headerStyleSheet);
 }
 
 MomsDuplicateDeleter::~MomsDuplicateDeleter() { delete ui; }
+
+bool MomsDuplicateDeleter::removeEmptyDirectory(QString dir) {
+  if (QDir(dir).isEmpty(QDir::NoDotAndDotDot | QDir::AllEntries)) {
+    QMessageBox::information(this, "Directory is empty", dir + " is Empty!!!");
+    QDir qDir(dir);
+    bool r = qDir.removeRecursively();
+    qDebug() << "The directory " + dir + " remove operation "
+             << (r ? "finished successfully" : "failed");
+    return true;
+  } else {
+    QMessageBox::information(this, "Directory is NOT empty",
+                             dir + " is NOT Empty!!!");
+    return false;
+  }
+}
 
 void MomsDuplicateDeleter::on_pbSelectDirectory_clicked() {
   ui->lePathToSearch->setText(QFileDialog::getExistingDirectory(
@@ -111,9 +113,14 @@ void MomsDuplicateDeleter::deleteDuplicateFiles(bool simulatedFlag) {
           if (!removeFile.remove()) {
             qWarning() << "ERROR: Removing file  " << fileToBeDeleted;
             qWarning() << "ERROR:  " << removeFile.errorString();
+          } else {
+            qDebug() << "File deleted is " << fileToBeDeleted;
+            if (removeEmptyDirectory(query6.value("path").toString())) {
+              qDebug() << query6.value("path").toString() << " deleted";
+            } else {
+              qDebug() << query6.value("path").toString() << " not deleted";
+            }
           }
-          //          else  qDebug() << "fileToBeDeleted is " <<
-          //          fileToBeDeleted;
         }
         //    qDebug() << "random file id result value " << query2.value("id");
         QSqlQuery query5;
@@ -179,7 +186,7 @@ void MomsDuplicateDeleter::fillUniqueFilesTable() {
   QString sFileType(ui->cbFileType->currentText());
   sFileType.replace("*.", "%");
   QString tempQuery(qrySelectUniques);
-  tempQuery.replace(":fileType", sFileType);
+  //  tempQuery.replace(":fileType", sFileType);
   query2.prepare(tempQuery);
   //  query2.bindValue(":fileType", sFileType);
   if (!query2.exec())
@@ -188,9 +195,12 @@ void MomsDuplicateDeleter::fillUniqueFilesTable() {
   query2.first();
   int j = 0;
   ui->tableExclusiveResultsList->setRowCount(0);
-  ui->tableExclusiveResultsList->setSortingEnabled(false);
   do {
     j++;
+    QTableWidgetItem *itemSize = new QTableWidgetItem;
+    itemSize->setData(Qt::EditRole, query2.value("size").toUInt());
+    QTableWidgetItem *itemCRC = new QTableWidgetItem;
+    itemCRC->setData(Qt::EditRole, query2.value("checksum").toUInt());
     ui->tableExclusiveResultsList->insertRow(
         ui->tableExclusiveResultsList->rowCount());
     ui->tableExclusiveResultsList->setItem(
@@ -203,11 +213,9 @@ void MomsDuplicateDeleter::fillUniqueFilesTable() {
         ui->tableExclusiveResultsList->rowCount() - 1, 2,
         new QTableWidgetItem(query2.value("path").toString()));
     ui->tableExclusiveResultsList->setItem(
-        ui->tableExclusiveResultsList->rowCount() - 1, 3,
-        new QTableWidgetItem(query2.value("size").toString()));
+        ui->tableExclusiveResultsList->rowCount() - 1, 3, itemSize);
     ui->tableExclusiveResultsList->setItem(
-        ui->tableExclusiveResultsList->rowCount() - 1, 4,
-        new QTableWidgetItem(query2.value("checksum").toString()));
+        ui->tableExclusiveResultsList->rowCount() - 1, 4, itemCRC);
   } while (query2.next());
   //  ui->tableExclusiveResultsList->sortByColumn(3, Qt::DescendingOrder);
   ui->tableExclusiveResultsList->setSortingEnabled(true);
@@ -270,6 +278,10 @@ void MomsDuplicateDeleter::fillDuplicateFilesTable() {
   ui->tableDuplicateResultsList->setSortingEnabled(false);
   do {
     j++;
+    QTableWidgetItem *itemSize = new QTableWidgetItem;
+    itemSize->setData(Qt::EditRole, query2.value("size").toUInt());
+    QTableWidgetItem *itemCRC = new QTableWidgetItem;
+    itemCRC->setData(Qt::EditRole, query2.value("checksum").toUInt());
     ui->tableDuplicateResultsList->insertRow(
         ui->tableDuplicateResultsList->rowCount());
     ui->tableDuplicateResultsList->setItem(
@@ -282,11 +294,9 @@ void MomsDuplicateDeleter::fillDuplicateFilesTable() {
         ui->tableDuplicateResultsList->rowCount() - 1, 2,
         new QTableWidgetItem(query2.value("path").toString()));
     ui->tableDuplicateResultsList->setItem(
-        ui->tableDuplicateResultsList->rowCount() - 1, 3,
-        new QTableWidgetItem(query2.value("size").toString()));
+        ui->tableDuplicateResultsList->rowCount() - 1, 3, itemSize);
     ui->tableDuplicateResultsList->setItem(
-        ui->tableDuplicateResultsList->rowCount() - 1, 4,
-        new QTableWidgetItem(query2.value("checksum").toString()));
+        ui->tableDuplicateResultsList->rowCount() - 1, 4, itemCRC);
   } while (query2.next());
   //  ui->tableDuplicateResultsList->sortByColumn(3, Qt::DescendingOrder);
   ui->tableDuplicateResultsList->setSortingEnabled(true);
@@ -690,8 +700,14 @@ void MomsDuplicateDeleter::deleteDuplicateFilesFromPathAndBelow(
                 qWarning() << "ERROR: Removing file  " << fileToBeDeleted;
                 qWarning() << "ERROR:  " << removeFile.errorString();
 
-              } else
+              } else {
                 qDebug() << "File deleted is " << fileToBeDeleted;
+                if (removeEmptyDirectory(query6.value("path").toString())) {
+                  qDebug() << query6.value("path").toString() << " deleted";
+                } else {
+                  qDebug() << query6.value("path").toString() << " not deleted";
+                }
+              }
             }
           }
           if (j % 200 == 0) {
@@ -815,8 +831,14 @@ void MomsDuplicateDeleter::deleteDuplicateFilesFromPath(bool simulatedFlag) {
                 qWarning() << "ERROR: Removing file  " << fileToBeDeleted;
                 qWarning() << "ERROR:  " << removeFile.errorString();
 
-              } else
+              } else {
                 qDebug() << "File deleted is " << fileToBeDeleted;
+                if (removeEmptyDirectory(query6.value("path").toString())) {
+                  qDebug() << query6.value("path").toString() << " deleted";
+                } else {
+                  qDebug() << query6.value("path").toString() << " not deleted";
+                }
+              }
             }
             //       else   qDebug() << "File that would have been deleted is "
             //                   << fileToBeDeleted;
@@ -940,9 +962,14 @@ void MomsDuplicateDeleter::deleteDuplicateFilesNotInPath(bool simulatedFlag) {
               if (!removeFile.remove()) {
                 qWarning() << "ERROR: Removing file  " << fileToBeDeleted;
                 qWarning() << "ERROR:  " << removeFile.errorString();
+              } else {
+                qDebug() << "File deleted is " << fileToBeDeleted;
+                if (removeEmptyDirectory(query6.value("path").toString())) {
+                  qDebug() << query6.value("path").toString() << " deleted";
+                } else {
+                  qDebug() << query6.value("path").toString() << " not deleted";
+                }
               }
-              //       else     qDebug() << "File deleted is " <<
-              //       fileToBeDeleted;
             }
             //        else  qDebug() << "File that would have been deleted is "
             //                   << fileToBeDeleted;
@@ -1086,6 +1113,9 @@ void MomsDuplicateDeleter::deleteSingleFile(bool simulatedFlag) {
                    ui->tableDuplicateResultsList
                        ->item(ui->tableDuplicateResultsList->currentRow(), 1)
                        ->text());
+  QString sPath(ui->tableDuplicateResultsList
+                    ->item(ui->tableDuplicateResultsList->currentRow(), 2)
+                    ->text());
   QSqlQuery query5;
   query5.prepare(
       qryDeleteFileByID +
@@ -1107,8 +1137,14 @@ void MomsDuplicateDeleter::deleteSingleFile(bool simulatedFlag) {
       if (!removeFile.remove()) {
         qWarning() << "ERROR: Removing file  " << sFilePath;
         qWarning() << "ERROR:  " << removeFile.errorString();
-      } else
-        qDebug() << "file Deleted was " << sFilePath;
+      } else {
+        qDebug() << "File deleted is " << sFilePath;
+        if (removeEmptyDirectory(sPath)) {
+          qDebug() << sPath << " deleted";
+        } else {
+          qDebug() << sPath << " not deleted";
+        }
+      }
     }
   }
   if (!simulatedFlag) {
