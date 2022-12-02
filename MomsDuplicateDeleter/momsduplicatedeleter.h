@@ -4,6 +4,7 @@
 #include "exif.h"
 #include "imageviewer.h"
 #include "sqlQuery.h"
+#include "window.h"
 #include <CRC32.h>
 #include <QDebug>
 #include <QDirIterator>
@@ -43,9 +44,11 @@ public:
   void deleteSingleFile(bool simulatedFlag);
   void deleteDuplicateFilesFromPathAndBelow(bool simulatedFlag);
   ImageViewer imageViewer;
+  Window window;
   bool fileExists(QString path);
   void fillUniqueFilesTable();
   bool removeEmptyDirectory(QString);
+  void excludeDuplicateFilesFromPathAndBelow();
 private slots:
   void on_pbSelectDirectory_clicked();
 
@@ -76,6 +79,12 @@ private slots:
   void on_pbViewImage_2_clicked();
 
   void on_pbFillTablesFromDB_2_clicked();
+
+  void on_pbOpenDirectory_clicked();
+
+  void on_pbOpenDirectoryExclusive_clicked();
+
+  void on_pbExcludePathAndBelow_clicked();
 
 private:
   QVector<QDir> fileList;

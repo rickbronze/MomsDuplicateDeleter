@@ -65,6 +65,8 @@
   "group by size having COUNT(size) > 1) group by checksum having "            \
   "COUNT(checksum) > 1) and (path ==':filePath') "
 
+#define qryExcludePathFromCatalog                                              \
+  "delete from files where path LIKE ':filePath%'"
 #define qryCountOfUniqueChecksumsInPathAndBelow                                \
   "select count(distinct checksum) as unique_count FROM files WHERE checksum " \
   "IN (SELECT checksum from files WHERE  size IN (SELECT size from files  "    \

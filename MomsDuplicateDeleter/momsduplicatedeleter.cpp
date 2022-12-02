@@ -755,6 +755,52 @@ void MomsDuplicateDeleter::deleteDuplicateFilesFromPathAndBelow(
         "specified path. ");
 }
 
+void MomsDuplicateDeleter::excludeDuplicateFilesFromPathAndBelow() {
+  if (ui->leUserSubPath->text() != "") {
+    unsigned int j = 0;
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    ui->progressBar->show();
+    ui->progressBar->setFormat("Starting delete operation ");
+    ui->progressBar->setValue(0);
+
+    QApplication::processEvents();
+    const QString DRIVER("QSQLITE");
+    if (QSqlDatabase::isDriverAvailable(DRIVER))
+      qDebug() << "database driver is installed";
+    QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER);
+    //     db.setDatabaseName(":memory:");
+    db.setDatabaseName(databaseFilename);
+    if (!db.open())
+      qWarning() << "ERROR: " << db.lastError();
+    db.transaction();
+    unsigned int uniqueFileCount = 0;
+    qint64 totalSize = 0;
+    QSqlQuery query4;
+    QString sFilePath(ui->leUserSubPath->text());
+    QString tempQuery(qryExcludePathFromCatalog);
+    tempQuery.replace(":filePath", sFilePath);
+    qWarning() << "query used " << tempQuery;
+    query4.prepare(tempQuery);
+    if (!query4.exec())
+      qWarning() << "ERROR: " << query4.lastError().text();
+    while (query4.next()) {
+      //        uniqueFileCount = query4.value("unique_count").toUInt();
+      qWarning() << "Files excluded :" << query4.value(0);
+    }
+    db.commit();
+    db.exec("VACUUM");
+    db.close();
+    QApplication::restoreOverrideCursor();
+    ui->progressBar->hide();
+    QApplication::processEvents();
+  } else
+    QMessageBox::information(
+        0, "No Path Entered",
+        "Please enter a Directory/Folder Path of the "
+        "duplicates you want to delete in the line below this button.  \nThis "
+        "will also delete the duplicates in all Directory/Folders under the "
+        "specified path. ");
+}
 void MomsDuplicateDeleter::deleteDuplicateFilesFromPath(bool simulatedFlag) {
   if (ui->tableDuplicateResultsList->currentRow() > -1) {
     unsigned int j = 0;
@@ -1330,4 +1376,66 @@ void MomsDuplicateDeleter::on_pbViewImage_2_clicked() {
 
 void MomsDuplicateDeleter::on_pbFillTablesFromDB_2_clicked() {
   on_pbFillTablesFromDB_clicked();
+}
+
+void MomsDuplicateDeleter::on_pbOpenDirectory_clicked() {
+  if (ui->tableDuplicateResultsList->currentRow() > -1) {
+    QString sFilePath(ui->tableDuplicateResultsList
+                          ->item(ui->tableDuplicateResultsList->currentRow(), 2)
+                          ->text());
+    //    Window *window = new Window(this);
+    window.directoryPath = sFilePath;
+    window.updateComboBoxWithDirectoryPath();
+    window.pushFindButton();
+    window.show();
+    window.setVisible(true);
+
+  } else
+    QMessageBox::information(0, "No Row Selected",
+                             "Please select a row with the "
+                             "path you want to open. ");
+}
+
+void MomsDuplicateDeleter::on_pbOpenDirectoryExclusive_clicked() {
+  if (ui->tableExclusiveResultsList->currentRow() > -1) {
+    QString sFilePath(ui->tableExclusiveResultsList
+                          ->item(ui->tableExclusiveResultsList->currentRow(), 2)
+                          ->text());
+    //    Window *window = new Window(this);
+    window.directoryPath = sFilePath;
+    window.updateComboBoxWithDirectoryPath();
+    window.pushFindButton();
+    window.show();
+    window.setVisible(true);
+
+  } else
+    QMessageBox::information(0, "No Row Selected",
+                             "Please select a row with the "
+                             "path you want to open. ");
+}
+
+void MomsDuplicateDeleter::on_pbExcludePathAndBelow_clicked() {
+  if (ui->leUserSubPath->text() != "") {
+    QString sFilePath(ui->leUserSubPath->text());
+    QMessageBox::StandardButton reply;
+    reply =
+        QMessageBox::question(this, "File Exclude Operation",
+                              "Excluding files, from the catalog, in\n " +
+                                  sFilePath + " and below.\nAre you sure you?",
+                              QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+      excludeDuplicateFilesFromPathAndBelow();
+      fillDuplicateFilesTable();
+    } else {
+      qDebug() << "Operation Cancelled";
+    }
+
+  } else
+    QMessageBox::information(
+        0, "No Path Entered",
+        "Please enter a Directory/Folder Path of the "
+        "path you want to exclude from the catalog in the line to the left "
+        "this button.  \nThis "
+        "will also exclude the files in all Directory/Folders under the "
+        "specified path from the catalog. ");
 }

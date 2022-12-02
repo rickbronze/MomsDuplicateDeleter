@@ -57,6 +57,8 @@ public:
     QPushButton *pbViewImage;
     QPushButton *pbViewMovie;
     QPushButton *pbVerifyDB;
+    QPushButton *pbOpenDirectory;
+    QPushButton *pbExcludePathAndBelow;
     QWidget *tabGathering;
     QLabel *label;
     QWidget *tabDeleting;
@@ -66,6 +68,7 @@ public:
     QPushButton *pbFillTablesFromDB_2;
     QPushButton *pbViewImage_2;
     QLabel *lbNumberOfUniqueFiles;
+    QPushButton *pbOpenDirectoryExclusive;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -93,7 +96,7 @@ public:
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         tabWidget = new QTabWidget(centralwidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
-        tabWidget->setGeometry(QRect(10, 0, 1011, 621));
+        tabWidget->setGeometry(QRect(10, 0, 1011, 661));
         tabCleanup = new QWidget();
         tabCleanup->setObjectName(QString::fromUtf8("tabCleanup"));
         pbSearch = new QPushButton(tabCleanup);
@@ -166,7 +169,7 @@ public:
         pbFillTablesFromDB->setFont(font);
         leUserSubPath = new QLineEdit(tabCleanup);
         leUserSubPath->setObjectName(QString::fromUtf8("leUserSubPath"));
-        leUserSubPath->setGeometry(QRect(570, 170, 191, 25));
+        leUserSubPath->setGeometry(QRect(570, 180, 191, 25));
         pbKeepInPath = new QPushButton(tabCleanup);
         pbKeepInPath->setObjectName(QString::fromUtf8("pbKeepInPath"));
         pbKeepInPath->setGeometry(QRect(10, 160, 271, 51));
@@ -189,7 +192,7 @@ public:
         pbDeleteSingle->setFont(font);
         pbDeleteFromPathBelow = new QPushButton(tabCleanup);
         pbDeleteFromPathBelow->setObjectName(QString::fromUtf8("pbDeleteFromPathBelow"));
-        pbDeleteFromPathBelow->setGeometry(QRect(570, 110, 191, 51));
+        pbDeleteFromPathBelow->setGeometry(QRect(570, 100, 191, 61));
         pbDeleteFromPathBelow->setFont(font);
         pbViewImage = new QPushButton(tabCleanup);
         pbViewImage->setObjectName(QString::fromUtf8("pbViewImage"));
@@ -201,6 +204,13 @@ public:
         pbVerifyDB->setObjectName(QString::fromUtf8("pbVerifyDB"));
         pbVerifyDB->setGeometry(QRect(260, 10, 111, 28));
         pbVerifyDB->setFont(font);
+        pbOpenDirectory = new QPushButton(tabCleanup);
+        pbOpenDirectory->setObjectName(QString::fromUtf8("pbOpenDirectory"));
+        pbOpenDirectory->setGeometry(QRect(780, 110, 91, 51));
+        pbOpenDirectory->setFont(font);
+        pbExcludePathAndBelow = new QPushButton(tabCleanup);
+        pbExcludePathAndBelow->setObjectName(QString::fromUtf8("pbExcludePathAndBelow"));
+        pbExcludePathAndBelow->setGeometry(QRect(780, 180, 191, 25));
         tabWidget->addTab(tabCleanup, QString());
         tabGathering = new QWidget();
         tabGathering->setObjectName(QString::fromUtf8("tabGathering"));
@@ -233,6 +243,10 @@ public:
         lbNumberOfUniqueFiles->setObjectName(QString::fromUtf8("lbNumberOfUniqueFiles"));
         lbNumberOfUniqueFiles->setGeometry(QRect(20, 50, 281, 16));
         lbNumberOfUniqueFiles->setFont(font);
+        pbOpenDirectoryExclusive = new QPushButton(tabExclusiveFiles);
+        pbOpenDirectoryExclusive->setObjectName(QString::fromUtf8("pbOpenDirectoryExclusive"));
+        pbOpenDirectoryExclusive->setGeometry(QRect(370, 10, 91, 51));
+        pbOpenDirectoryExclusive->setFont(font);
         tabWidget->addTab(tabExclusiveFiles, QString());
         MomsDuplicateDeleter->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MomsDuplicateDeleter);
@@ -327,14 +341,22 @@ public:
         pbDeleteFromPathBelow->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>This button will take the duplicate files that are in the Directory/Folder specified and below and delete those files.  Specify the base directory/folder in the text box below the button.</p><p>For instance, I have copies of complete directory/folder structures on two drives.  This will allow me me to delete them all at once instead of having to pick every directory/folder in the list individually.  Specify the base directory/folder in the text box below the button.</p></body></html>", nullptr));
 #endif // QT_NO_TOOLTIP
         pbDeleteFromPathBelow->setText(QApplication::translate("MomsDuplicateDeleter", "Delete Duplicate files \n"
-"from Directory/Folder \n"
-"Entered Below", nullptr));
+"from Directory/Folder\n"
+"Entered Below\n"
+" (and all sub-folders) ", nullptr));
         pbViewImage->setText(QApplication::translate("MomsDuplicateDeleter", "View Image", nullptr));
         pbViewMovie->setText(QApplication::translate("MomsDuplicateDeleter", "View Movie", nullptr));
 #ifndef QT_NO_TOOLTIP
         pbVerifyDB->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>The Start Over button will clear the database where the list of files is stored.  This is very important if you have changed the files, on your own, but still have stale information in the list.  For instance, if you delete a file that is a duplicate, on your own and now you only have one opy.  Since you deleted a file without the program, then it remains in the list in the database.  Then when the delete process is engaged, using the list from the database, the program will think there is a duplicate, when there actually isn't and may choose to delete the only copy you have left.  </p><p>Bottom line, best practice is to use this Start Over whenever you do things on your own with the files, even moving them...  After hitting the Start Over button, then you will need to scan your files again.  </p></body></html>", nullptr));
 #endif // QT_NO_TOOLTIP
         pbVerifyDB->setText(QApplication::translate("MomsDuplicateDeleter", "Verify Catalog", nullptr));
+#ifndef QT_NO_TOOLTIP
+        pbOpenDirectory->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>This button will open a window for showing the files in the chosen directory.</p></body></html>", nullptr));
+#endif // QT_NO_TOOLTIP
+        pbOpenDirectory->setText(QApplication::translate("MomsDuplicateDeleter", "Open \n"
+"Selected \n"
+"Directory", nullptr));
+        pbExcludePathAndBelow->setText(QApplication::translate("MomsDuplicateDeleter", "Remove Path and below", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabCleanup), QApplication::translate("MomsDuplicateDeleter", "File Cleanup", nullptr));
         label->setText(QApplication::translate("MomsDuplicateDeleter", "This area will eventually be a place that you can gather and view all your files in one place", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabGathering), QApplication::translate("MomsDuplicateDeleter", "File Gathering", nullptr));
@@ -346,6 +368,12 @@ public:
         pbFillTablesFromDB_2->setText(QApplication::translate("MomsDuplicateDeleter", "Load Last Catalog", nullptr));
         pbViewImage_2->setText(QApplication::translate("MomsDuplicateDeleter", "View Image", nullptr));
         lbNumberOfUniqueFiles->setText(QApplication::translate("MomsDuplicateDeleter", "Number of files that are not duplicate", nullptr));
+#ifndef QT_NO_TOOLTIP
+        pbOpenDirectoryExclusive->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>This button will open a window for showing the files in the chosen directory.</p></body></html>", nullptr));
+#endif // QT_NO_TOOLTIP
+        pbOpenDirectoryExclusive->setText(QApplication::translate("MomsDuplicateDeleter", "Open \n"
+"Selected \n"
+"Directory", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabExclusiveFiles), QApplication::translate("MomsDuplicateDeleter", "Exclusive File List", nullptr));
     } // retranslateUi
 

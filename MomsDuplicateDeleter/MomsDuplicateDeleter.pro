@@ -21,7 +21,8 @@ SOURCES += \
     exif.cpp \
     imageviewer.cpp \
     main.cpp \
-    momsduplicatedeleter.cpp
+    momsduplicatedeleter.cpp \
+    window.cpp
 
 HEADERS += \
     CRC32.h \
@@ -29,7 +30,8 @@ HEADERS += \
     exif.h \
     imageviewer.h \
     momsduplicatedeleter.h \
-    sqlQuery.h
+    sqlQuery.h \
+    window.h
 
 FORMS += \
     momsduplicatedeleter.ui
