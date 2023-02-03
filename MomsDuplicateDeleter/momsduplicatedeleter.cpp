@@ -84,7 +84,7 @@ void MomsDuplicateDeleter::deleteDuplicateFiles(bool simulatedFlag) {
     }
     if (uniqueFileCount > 0) {
       QSqlQuery query2;
-      query2.prepare(qryIDRandomDuplicate);
+      query2.prepare(qryIDRandomDuplicateWithCopyInFileName);
       if (!query2.exec())
         qWarning() << "ERROR: " << query2.lastError().text();
       //    qDebug() << "size returned by query is " << query2.value(0).toInt();
@@ -170,6 +170,122 @@ void MomsDuplicateDeleter::deleteDuplicateFiles(bool simulatedFlag) {
             " MB - Total Space that would be Reclaimed ");
   }
 }
+void MomsDuplicateDeleter::deleteDuplicateCopyFiles(bool simulatedFlag) {
+  unsigned int j = 0;
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  QApplication::processEvents();
+  const QString DRIVER("QSQLITE");
+  if (QSqlDatabase::isDriverAvailable(DRIVER))
+    qDebug() << "database driver is installed";
+  QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER);
+  //     db.setDatabaseName(":memory:");
+  db.setDatabaseName(databaseFilename);
+  if (!db.open())
+    qWarning() << "ERROR: " << db.lastError();
+  unsigned int uniqueFileCount = 0;
+  qint64 totalSize = 0;
+  ui->progressBar->show();
+  ui->progressBar->setFormat("Starting delete File Copies operation ");
+  ui->progressBar->setValue(0);
+  QApplication::processEvents();
+  QSqlQuery query4;
+  query4.prepare(qryCountOfUniqueChecksumsWithCopyInFileName);
+  do {
+    db.transaction();
+    if (!query4.exec())
+      qWarning() << "ERROR: " << query4.lastError().text();
+    while (query4.next()) {
+      uniqueFileCount = query4.value("unique_count").toUInt();
+    }
+    if (uniqueFileCount > 0) {
+      QSqlQuery query2;
+      query2.prepare(qryIDRandomDuplicateWithCopyInFileName);
+      if (!query2.exec())
+        qWarning() << "ERROR: " << query2.lastError().text();
+      //    qDebug() << "size returned by query is " << query2.value(0).toInt();
+      unsigned int uniqueFileID = 0;
+
+      while (query2.next()) {
+        uniqueFileID = query2.value("id").toUInt();
+        totalSize += query2.value("size").toUInt();
+      }
+      QSqlQuery query6;
+      query6.prepare(qryFilePath + QString::number(uniqueFileID));
+      if (!query6.exec())
+        qWarning() << "ERROR: " << query6.lastError().text();
+      QString fileToBeDeleted;
+      while (query6.next()) {
+        fileToBeDeleted.append(query6.value("path").toString());
+        fileToBeDeleted.append("/");
+        fileToBeDeleted.append(query6.value("name").toString());
+        if (!simulatedFlag) {
+          QFile removeFile(fileToBeDeleted);
+          if (!removeFile.setPermissions(QFile::ReadOther |
+                                         QFile::WriteOther)) {
+            qWarning() << "ERROR: setting permissions  " << fileToBeDeleted;
+            qWarning() << "ERROR:  " << removeFile.errorString();
+          }
+          if (!removeFile.remove()) {
+            qWarning() << "ERROR: Removing file  " << fileToBeDeleted;
+            qWarning() << "ERROR:  " << removeFile.errorString();
+          } else {
+            qDebug() << "File deleted is " << fileToBeDeleted;
+            if (removeEmptyDirectory(query6.value("path").toString())) {
+              qDebug() << query6.value("path").toString() << " deleted";
+            } else {
+              qDebug() << query6.value("path").toString() << " not deleted";
+            }
+          }
+        }
+        //    qDebug() << "random file id result value " << query2.value("id");
+        QSqlQuery query5;
+        query5.prepare(qryDeleteFileByID + QString::number(uniqueFileID));
+        if (!query5.exec())
+          qWarning() << "ERROR: " << query5.lastError().text();
+        //        qDebug() << "rows affected is  " << query5.numRowsAffected();
+        j++;
+        if (j % 100 == 0) {
+          unsigned int progressFraction = j % 99;
+          if ((numberOfDupFiles - numberOfUniqueFiles) != 0)
+            progressFraction =
+                ((j * 100) / (numberOfDupFiles - numberOfUniqueFiles));
+          ui->progressBar->setValue(int(progressFraction));
+          ui->progressBar->setFormat("Delete progress  -   " +
+                                     QString::number(progressFraction) + " % ");
+          QApplication::processEvents();
+        }
+      }
+    }
+  } while (uniqueFileCount > 0);
+  if (!simulatedFlag) {
+    db.commit();
+    db.exec("VACUUM");
+    qDebug() << "number of files that were deleted " << j;
+  } else {
+    db.rollback();
+    qDebug() << "number of files that would be deleted " << j;
+  }
+  db.exec("VACUUM");
+  db.close();
+  QApplication::restoreOverrideCursor();
+  ui->progressBar->hide();
+  QApplication::processEvents();
+  if (!simulatedFlag) {
+    QMessageBox::information(
+        0, "Delete Operation Stats",
+        QString::number(j) + " File(s) - Total number of file(s) deleted\n" +
+            QString::number(totalSize / 1000000) +
+            " MB - Total Space Reclaimed ");
+  } else {
+    QMessageBox::information(
+        0, "Simulated Delete Operation Stats",
+        QString::number(j) +
+            " File(s) - Total number of file(s) that would be deleted\n" +
+            QString::number(totalSize / 1000000) +
+            " MB - Total Space that would be Reclaimed ");
+  }
+}
+
 void MomsDuplicateDeleter::fillUniqueFilesTable() {
   const QString DRIVER("QSQLITE");
   ui->cbFileType->setCurrentIndex(0);
@@ -558,7 +674,7 @@ void MomsDuplicateDeleter::on_pbActualDelete_clicked() {
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(
         this, "Simulating File Delete Operation",
-        "Simulating Deleting duplicate files randomly.\nAre you sure you?",
+        "Simulating Deleting duplicate files randomly.\nAre you sure?",
         QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
       deleteDuplicateFiles(true);
@@ -572,7 +688,7 @@ void MomsDuplicateDeleter::on_pbActualDelete_clicked() {
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(
         this, "File Delete Operation",
-        "Deleting duplicate files randomly.\nAre you sure you?",
+        "Deleting duplicate files randomly.\nAre you sure?",
         QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
       deleteDuplicateFiles(false);
@@ -594,7 +710,7 @@ void MomsDuplicateDeleter::on_pbDeleteFromPath_clicked() {
       reply =
           QMessageBox::question(this, "Simulating File Delete Operation",
                                 "Simulating Deleting duplicate files in\n " +
-                                    sFilePath + "\nAre you sure you?",
+                                    sFilePath + "\nAre you sure?",
                                 QMessageBox::Yes | QMessageBox::No);
       if (reply == QMessageBox::Yes) {
         deleteDuplicateFilesFromPath(true);
@@ -612,7 +728,7 @@ void MomsDuplicateDeleter::on_pbDeleteFromPath_clicked() {
       QMessageBox::StandardButton reply;
       reply = QMessageBox::question(this, "File Delete Operation",
                                     "Deleting duplicate files in\n " +
-                                        sFilePath + "\nAre you sure you?",
+                                        sFilePath + "\nAre you sure?",
                                     QMessageBox::Yes | QMessageBox::No);
       if (reply == QMessageBox::Yes) {
         deleteDuplicateFilesFromPath(false);
@@ -1078,7 +1194,7 @@ void MomsDuplicateDeleter::on_pbKeepInPath_clicked() {
       reply = QMessageBox::question(
           this, "Simulating File Delete Operation",
           "Simulating deleting duplicate files not in\n " + sFilePath +
-              "\nAre you sure you?",
+              "\nAre you sure?",
           QMessageBox::Yes | QMessageBox::No);
       if (reply == QMessageBox::Yes) {
         deleteDuplicateFilesNotInPath(true);
@@ -1094,7 +1210,7 @@ void MomsDuplicateDeleter::on_pbKeepInPath_clicked() {
       QMessageBox::StandardButton reply;
       reply = QMessageBox::question(this, "File Delete Operation",
                                     "Deleting duplicate files not in\n " +
-                                        sFilePath + "\nAre you sure you?",
+                                        sFilePath + "\nAre you sure?",
                                     QMessageBox::Yes | QMessageBox::No);
       if (reply == QMessageBox::Yes) {
         deleteDuplicateFilesNotInPath(false);
@@ -1127,7 +1243,7 @@ void MomsDuplicateDeleter::on_pbDeleteSingle_clicked() {
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "File Delete Operation",
                                   "Deleting duplicate file \n " + sFilePath +
-                                      "\nAre you sure you?",
+                                      "\nAre you sure?",
                                   QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
       deleteSingleFile(ui->cbSimulateFlag->isChecked());
@@ -1214,11 +1330,11 @@ void MomsDuplicateDeleter::on_pbDeleteFromPathBelow_clicked() {
     if (ui->cbSimulateFlag->isChecked()) {
       QString sFilePath(ui->leUserSubPath->text());
       QMessageBox::StandardButton reply;
-      reply = QMessageBox::question(
-          this, "Simulating File Delete Operation",
-          "Simulating Deleting duplicate files in\n " + sFilePath +
-              " and below.\nAre you sure you?",
-          QMessageBox::Yes | QMessageBox::No);
+      reply =
+          QMessageBox::question(this, "Simulating File Delete Operation",
+                                "Simulating Deleting duplicate files in\n " +
+                                    sFilePath + " and below.\nAre you sure?",
+                                QMessageBox::Yes | QMessageBox::No);
       if (reply == QMessageBox::Yes) {
         deleteDuplicateFilesFromPathAndBelow(true);
         fillDuplicateFilesTable();
@@ -1233,7 +1349,7 @@ void MomsDuplicateDeleter::on_pbDeleteFromPathBelow_clicked() {
       reply =
           QMessageBox::question(this, "File Delete Operation",
                                 "Deleting duplicate files in\n " + sFilePath +
-                                    " and below.\nAre you sure you?",
+                                    " and below.\nAre you sure?",
                                 QMessageBox::Yes | QMessageBox::No);
       if (reply == QMessageBox::Yes) {
         deleteDuplicateFilesFromPathAndBelow(false);
@@ -1418,11 +1534,10 @@ void MomsDuplicateDeleter::on_pbExcludePathAndBelow_clicked() {
   if (ui->leUserSubPath->text() != "") {
     QString sFilePath(ui->leUserSubPath->text());
     QMessageBox::StandardButton reply;
-    reply =
-        QMessageBox::question(this, "File Exclude Operation",
-                              "Excluding files, from the catalog, in\n " +
-                                  sFilePath + " and below.\nAre you sure you?",
-                              QMessageBox::Yes | QMessageBox::No);
+    reply = QMessageBox::question(this, "File Exclude Operation",
+                                  "Excluding files, from the catalog, in\n " +
+                                      sFilePath + " and below.\nAre you sure?",
+                                  QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
       excludeDuplicateFilesFromPathAndBelow();
       fillDuplicateFilesTable();
@@ -1438,4 +1553,36 @@ void MomsDuplicateDeleter::on_pbExcludePathAndBelow_clicked() {
         "this button.  \nThis "
         "will also exclude the files in all Directory/Folders under the "
         "specified path from the catalog. ");
+}
+
+void MomsDuplicateDeleter::on_pbDeleteCopyFiles_clicked() {
+  if (ui->cbSimulateFlag->isChecked()) {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(
+        this, "Simulating File Delete Operation",
+        "Simulating Deleting duplicate files with \na variation of automatic "
+        "copies made.\nAre you sure?",
+        QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+      deleteDuplicateCopyFiles(true);
+      fillDuplicateFilesTable();
+    } else {
+      qDebug() << "Operation Cancelled";
+    }
+  }
+
+  else {
+    QMessageBox::StandardButton reply;
+    reply =
+        QMessageBox::question(this, "File Delete Operation",
+                              "Deleting duplicate files with a variation of "
+                              "automatic copies made.\nAre you sure?",
+                              QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+      deleteDuplicateCopyFiles(false);
+      fillDuplicateFilesTable();
+    } else {
+      qDebug() << "Operation Cancelled";
+    }
+  }
 }

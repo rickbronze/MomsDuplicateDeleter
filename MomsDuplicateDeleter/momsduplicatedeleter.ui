@@ -135,28 +135,6 @@ to calalog</string>
        <string>No Search Performed...</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pbActualDelete">
-      <property name="geometry">
-       <rect>
-        <x>300</x>
-        <y>160</y>
-        <width>231</width>
-        <height>51</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Delete All Duplicate files is a bruteforce, yet simple, way of getting rid of all the duplicates found from the searches.   The catch is that it will do it randomly, sometimes from one directory/folder, sometimes from a different directory/folder. &lt;/p&gt;&lt;p&gt;This was my mom's original request.  The idea is to first get rid of the duplicates, then gather everything into one directory/folder and then sort it out from there.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="text">
-       <string>Delete  All Duplicate files 
-Randomly</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="pbExportFilesList2CSV">
       <property name="geometry">
        <rect>
@@ -360,7 +338,7 @@ from Directory/Folder Chosen</string>
      <widget class="QLineEdit" name="leUserSubPath">
       <property name="geometry">
        <rect>
-        <x>570</x>
+        <x>690</x>
         <y>180</y>
         <width>191</width>
         <height>25</height>
@@ -543,8 +521,8 @@ Entered Below
      <widget class="QPushButton" name="pbOpenDirectory">
       <property name="geometry">
        <rect>
-        <x>780</x>
-        <y>110</y>
+        <x>300</x>
+        <y>160</y>
         <width>91</width>
         <height>51</height>
        </rect>
@@ -566,14 +544,30 @@ Directory</string>
      <widget class="QPushButton" name="pbExcludePathAndBelow">
       <property name="geometry">
        <rect>
-        <x>780</x>
-        <y>180</y>
-        <width>191</width>
-        <height>25</height>
+        <x>770</x>
+        <y>100</y>
+        <width>221</width>
+        <height>71</height>
        </rect>
       </property>
       <property name="text">
-       <string>Remove Path and below</string>
+       <string>Exclude files 
+from Directory/Folder
+Entered Belowfrom catalog
+ (and all sub-folders) </string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>550</x>
+        <y>180</y>
+        <width>131</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>User Entered Path:</string>
       </property>
      </widget>
     </widget>
@@ -711,6 +705,56 @@ Directory</string>
        <string>Open 
 Selected 
 Directory</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tabOperations">
+     <attribute name="title">
+      <string>Just Do It</string>
+     </attribute>
+     <widget class="QPushButton" name="pbActualDelete">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>30</y>
+        <width>231</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Delete All Duplicate files is a bruteforce, yet simple, way of getting rid of all the duplicates found from the searches.   The catch is that it will do it randomly, sometimes from one directory/folder, sometimes from a different directory/folder. &lt;/p&gt;&lt;p&gt;This was my mom's original request.  The idea is to first get rid of the duplicates, then gather everything into one directory/folder and then sort it out from there.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>Delete  All Duplicate files 
+Randomly</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbDeleteCopyFiles">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>110</y>
+        <width>231</width>
+        <height>121</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Delete All Duplicate files is a bruteforce, yet simple, way of getting rid of all the duplicates found from the searches.   The catch is that it will do it randomly, sometimes from one directory/folder, sometimes from a different directory/folder. &lt;/p&gt;&lt;p&gt;This was my mom's original request.  The idea is to first get rid of the duplicates, then gather everything into one directory/folder and then sort it out from there.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>Delete  All Duplicate files 
+with Copy, copy COPY, or &quot;(*)&quot;
+in the filename.</string>
       </property>
      </widget>
     </widget>

@@ -39,7 +39,6 @@ public:
     QTableWidget *tableDuplicateResultsList;
     QLabel *lbNumberOfUniqueDuplicateFiles;
     QLabel *lbNumberOfFiles;
-    QPushButton *pbActualDelete;
     QPushButton *pbExportFilesList2CSV;
     QPushButton *pbDeleteFromPath;
     QLineEdit *lePathToSearch;
@@ -59,6 +58,7 @@ public:
     QPushButton *pbVerifyDB;
     QPushButton *pbOpenDirectory;
     QPushButton *pbExcludePathAndBelow;
+    QLabel *label_3;
     QWidget *tabGathering;
     QLabel *label;
     QWidget *tabDeleting;
@@ -69,6 +69,9 @@ public:
     QPushButton *pbViewImage_2;
     QLabel *lbNumberOfUniqueFiles;
     QPushButton *pbOpenDirectoryExclusive;
+    QWidget *tabOperations;
+    QPushButton *pbActualDelete;
+    QPushButton *pbDeleteCopyFiles;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -122,10 +125,6 @@ public:
         lbNumberOfFiles->setObjectName(QString::fromUtf8("lbNumberOfFiles"));
         lbNumberOfFiles->setGeometry(QRect(870, 220, 401, 16));
         lbNumberOfFiles->setFont(font);
-        pbActualDelete = new QPushButton(tabCleanup);
-        pbActualDelete->setObjectName(QString::fromUtf8("pbActualDelete"));
-        pbActualDelete->setGeometry(QRect(300, 160, 231, 51));
-        pbActualDelete->setFont(font);
         pbExportFilesList2CSV = new QPushButton(tabCleanup);
         pbExportFilesList2CSV->setObjectName(QString::fromUtf8("pbExportFilesList2CSV"));
         pbExportFilesList2CSV->setGeometry(QRect(1100, 10, 141, 21));
@@ -169,7 +168,7 @@ public:
         pbFillTablesFromDB->setFont(font);
         leUserSubPath = new QLineEdit(tabCleanup);
         leUserSubPath->setObjectName(QString::fromUtf8("leUserSubPath"));
-        leUserSubPath->setGeometry(QRect(570, 180, 191, 25));
+        leUserSubPath->setGeometry(QRect(690, 180, 191, 25));
         pbKeepInPath = new QPushButton(tabCleanup);
         pbKeepInPath->setObjectName(QString::fromUtf8("pbKeepInPath"));
         pbKeepInPath->setGeometry(QRect(10, 160, 271, 51));
@@ -206,11 +205,14 @@ public:
         pbVerifyDB->setFont(font);
         pbOpenDirectory = new QPushButton(tabCleanup);
         pbOpenDirectory->setObjectName(QString::fromUtf8("pbOpenDirectory"));
-        pbOpenDirectory->setGeometry(QRect(780, 110, 91, 51));
+        pbOpenDirectory->setGeometry(QRect(300, 160, 91, 51));
         pbOpenDirectory->setFont(font);
         pbExcludePathAndBelow = new QPushButton(tabCleanup);
         pbExcludePathAndBelow->setObjectName(QString::fromUtf8("pbExcludePathAndBelow"));
-        pbExcludePathAndBelow->setGeometry(QRect(780, 180, 191, 25));
+        pbExcludePathAndBelow->setGeometry(QRect(770, 100, 221, 71));
+        label_3 = new QLabel(tabCleanup);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
+        label_3->setGeometry(QRect(550, 180, 131, 20));
         tabWidget->addTab(tabCleanup, QString());
         tabGathering = new QWidget();
         tabGathering->setObjectName(QString::fromUtf8("tabGathering"));
@@ -248,6 +250,17 @@ public:
         pbOpenDirectoryExclusive->setGeometry(QRect(370, 10, 91, 51));
         pbOpenDirectoryExclusive->setFont(font);
         tabWidget->addTab(tabExclusiveFiles, QString());
+        tabOperations = new QWidget();
+        tabOperations->setObjectName(QString::fromUtf8("tabOperations"));
+        pbActualDelete = new QPushButton(tabOperations);
+        pbActualDelete->setObjectName(QString::fromUtf8("pbActualDelete"));
+        pbActualDelete->setGeometry(QRect(20, 30, 231, 51));
+        pbActualDelete->setFont(font);
+        pbDeleteCopyFiles = new QPushButton(tabOperations);
+        pbDeleteCopyFiles->setObjectName(QString::fromUtf8("pbDeleteCopyFiles"));
+        pbDeleteCopyFiles->setGeometry(QRect(20, 110, 231, 121));
+        pbDeleteCopyFiles->setFont(font);
+        tabWidget->addTab(tabOperations, QString());
         MomsDuplicateDeleter->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MomsDuplicateDeleter);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -276,11 +289,6 @@ public:
         lbNumberOfDuplicateFiles->setText(QApplication::translate("MomsDuplicateDeleter", "Number of files that are duplicate", nullptr));
         lbNumberOfUniqueDuplicateFiles->setText(QApplication::translate("MomsDuplicateDeleter", "Number of Unique Files that are duplicates", nullptr));
         lbNumberOfFiles->setText(QApplication::translate("MomsDuplicateDeleter", "No Search Performed...", nullptr));
-#ifndef QT_NO_TOOLTIP
-        pbActualDelete->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>The Delete All Duplicate files is a bruteforce, yet simple, way of getting rid of all the duplicates found from the searches.   The catch is that it will do it randomly, sometimes from one directory/folder, sometimes from a different directory/folder. </p><p>This was my mom's original request.  The idea is to first get rid of the duplicates, then gather everything into one directory/folder and then sort it out from there.</p></body></html>", nullptr));
-#endif // QT_NO_TOOLTIP
-        pbActualDelete->setText(QApplication::translate("MomsDuplicateDeleter", "Delete  All Duplicate files \n"
-"Randomly", nullptr));
 #ifndef QT_NO_TOOLTIP
         pbExportFilesList2CSV->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p><span style=\" font-weight:600; color:#000000;\">Save Plan List to CVS file</span></p></body></html>", nullptr));
 #endif // QT_NO_TOOLTIP
@@ -356,7 +364,11 @@ public:
         pbOpenDirectory->setText(QApplication::translate("MomsDuplicateDeleter", "Open \n"
 "Selected \n"
 "Directory", nullptr));
-        pbExcludePathAndBelow->setText(QApplication::translate("MomsDuplicateDeleter", "Remove Path and below", nullptr));
+        pbExcludePathAndBelow->setText(QApplication::translate("MomsDuplicateDeleter", "Exclude files \n"
+"from Directory/Folder\n"
+"Entered Belowfrom catalog\n"
+" (and all sub-folders) ", nullptr));
+        label_3->setText(QApplication::translate("MomsDuplicateDeleter", "User Entered Path:", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabCleanup), QApplication::translate("MomsDuplicateDeleter", "File Cleanup", nullptr));
         label->setText(QApplication::translate("MomsDuplicateDeleter", "This area will eventually be a place that you can gather and view all your files in one place", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabGathering), QApplication::translate("MomsDuplicateDeleter", "File Gathering", nullptr));
@@ -375,6 +387,18 @@ public:
 "Selected \n"
 "Directory", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabExclusiveFiles), QApplication::translate("MomsDuplicateDeleter", "Exclusive File List", nullptr));
+#ifndef QT_NO_TOOLTIP
+        pbActualDelete->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>The Delete All Duplicate files is a bruteforce, yet simple, way of getting rid of all the duplicates found from the searches.   The catch is that it will do it randomly, sometimes from one directory/folder, sometimes from a different directory/folder. </p><p>This was my mom's original request.  The idea is to first get rid of the duplicates, then gather everything into one directory/folder and then sort it out from there.</p></body></html>", nullptr));
+#endif // QT_NO_TOOLTIP
+        pbActualDelete->setText(QApplication::translate("MomsDuplicateDeleter", "Delete  All Duplicate files \n"
+"Randomly", nullptr));
+#ifndef QT_NO_TOOLTIP
+        pbDeleteCopyFiles->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>The Delete All Duplicate files is a bruteforce, yet simple, way of getting rid of all the duplicates found from the searches.   The catch is that it will do it randomly, sometimes from one directory/folder, sometimes from a different directory/folder. </p><p>This was my mom's original request.  The idea is to first get rid of the duplicates, then gather everything into one directory/folder and then sort it out from there.</p></body></html>", nullptr));
+#endif // QT_NO_TOOLTIP
+        pbDeleteCopyFiles->setText(QApplication::translate("MomsDuplicateDeleter", "Delete  All Duplicate files \n"
+"with Copy, copy COPY, or \"(*)\"\n"
+"in the filename.", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(tabOperations), QApplication::translate("MomsDuplicateDeleter", "Just Do It", nullptr));
     } // retranslateUi
 
 };

@@ -49,6 +49,7 @@ public:
   void fillUniqueFilesTable();
   bool removeEmptyDirectory(QString);
   void excludeDuplicateFilesFromPathAndBelow();
+  void deleteDuplicateCopyFiles(bool simulatedFlag);
 private slots:
   void on_pbSelectDirectory_clicked();
 
@@ -85,6 +86,8 @@ private slots:
   void on_pbOpenDirectoryExclusive_clicked();
 
   void on_pbExcludePathAndBelow_clicked();
+
+  void on_pbDeleteCopyFiles_clicked();
 
 private:
   QVector<QDir> fileList;

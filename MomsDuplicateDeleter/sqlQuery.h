@@ -67,6 +67,29 @@
 
 #define qryExcludePathFromCatalog                                              \
   "delete from files where path LIKE ':filePath%'"
+
+#define qryIDRandomDuplicateWithCopyInFileName                                 \
+  "select id, size FROM files WHERE checksum IN "                              \
+  "(SELECT checksum from files WHERE   size IN (SELECT size from files  "      \
+  "group by size having COUNT(size) > 1)   AND ((name LIKE '%(%)%') OR (name " \
+  "LIKE '%Copy%') OR "                                                         \
+  "(name LIKE '%copy%' ) OR (name LIKE '%COPY%' )) ORDER BY RANDOM() LIMIT 1)"
+
+#define qryCountOfUniqueChecksumsWithCopyInFileName                            \
+  "select count(distinct checksum) as unique_count FROM files WHERE checksum " \
+  "IN (SELECT checksum from files WHERE  size IN (SELECT size from files  "    \
+  "group by size having COUNT(size) > 1) group by checksum having "            \
+  "COUNT(checksum) > 1) AND ((name LIKE '%(%)%') OR (name "                    \
+  "LIKE '%Copy%') OR "                                                         \
+  "(name LIKE '%copy%' ) OR (name LIKE '%COPY%' ))"
+
+#define qryDeleteDuplicateFileWithCopyInFileName                               \
+  "DELETE from files where id == (select id FROM files WHERE checksum IN "     \
+  "(SELECT checksum from files WHERE   size IN (SELECT size from files  "      \
+  "group by size having COUNT(size) > 1)   group by checksum having "          \
+  "COUNT(checksum) > 1) AND ((name LIKE '%(%)%') OR (name LIKE '%Copy%') OR "  \
+  "(name LIKE '%copy%' ) OR (name LIKE '%COPY%' )) ORDER BY RANDOM() LIMIT 1)"
+
 #define qryCountOfUniqueChecksumsInPathAndBelow                                \
   "select count(distinct checksum) as unique_count FROM files WHERE checksum " \
   "IN (SELECT checksum from files WHERE  size IN (SELECT size from files  "    \
