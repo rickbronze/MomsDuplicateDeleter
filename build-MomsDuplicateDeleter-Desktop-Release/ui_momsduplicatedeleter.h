@@ -17,6 +17,7 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
+#include <QtWidgets/QListView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QProgressBar>
@@ -57,7 +58,6 @@ public:
     QPushButton *pbViewMovie;
     QPushButton *pbVerifyDB;
     QPushButton *pbOpenDirectory;
-    QPushButton *pbExcludePathAndBelow;
     QLabel *label_3;
     QWidget *tabGathering;
     QLabel *label;
@@ -72,6 +72,14 @@ public:
     QWidget *tabOperations;
     QPushButton *pbActualDelete;
     QPushButton *pbDeleteCopyFiles;
+    QWidget *tabCatalog;
+    QPushButton *pbExcludePathAndBelow;
+    QLineEdit *leExcludePath;
+    QLabel *label_4;
+    QLineEdit *leExcludeFilePath;
+    QPushButton *pbSelectExcludeFilePath;
+    QPushButton *pbExcludePathAndBelow_2;
+    QListView *tableExcludeDirectories;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -168,7 +176,7 @@ public:
         pbFillTablesFromDB->setFont(font);
         leUserSubPath = new QLineEdit(tabCleanup);
         leUserSubPath->setObjectName(QString::fromUtf8("leUserSubPath"));
-        leUserSubPath->setGeometry(QRect(690, 180, 191, 25));
+        leUserSubPath->setGeometry(QRect(710, 180, 191, 25));
         pbKeepInPath = new QPushButton(tabCleanup);
         pbKeepInPath->setObjectName(QString::fromUtf8("pbKeepInPath"));
         pbKeepInPath->setGeometry(QRect(10, 160, 271, 51));
@@ -191,7 +199,7 @@ public:
         pbDeleteSingle->setFont(font);
         pbDeleteFromPathBelow = new QPushButton(tabCleanup);
         pbDeleteFromPathBelow->setObjectName(QString::fromUtf8("pbDeleteFromPathBelow"));
-        pbDeleteFromPathBelow->setGeometry(QRect(570, 100, 191, 61));
+        pbDeleteFromPathBelow->setGeometry(QRect(640, 100, 191, 61));
         pbDeleteFromPathBelow->setFont(font);
         pbViewImage = new QPushButton(tabCleanup);
         pbViewImage->setObjectName(QString::fromUtf8("pbViewImage"));
@@ -207,12 +215,9 @@ public:
         pbOpenDirectory->setObjectName(QString::fromUtf8("pbOpenDirectory"));
         pbOpenDirectory->setGeometry(QRect(300, 160, 91, 51));
         pbOpenDirectory->setFont(font);
-        pbExcludePathAndBelow = new QPushButton(tabCleanup);
-        pbExcludePathAndBelow->setObjectName(QString::fromUtf8("pbExcludePathAndBelow"));
-        pbExcludePathAndBelow->setGeometry(QRect(770, 100, 221, 71));
         label_3 = new QLabel(tabCleanup);
         label_3->setObjectName(QString::fromUtf8("label_3"));
-        label_3->setGeometry(QRect(550, 180, 131, 20));
+        label_3->setGeometry(QRect(570, 180, 131, 20));
         tabWidget->addTab(tabCleanup, QString());
         tabGathering = new QWidget();
         tabGathering->setObjectName(QString::fromUtf8("tabGathering"));
@@ -261,6 +266,41 @@ public:
         pbDeleteCopyFiles->setGeometry(QRect(20, 110, 231, 121));
         pbDeleteCopyFiles->setFont(font);
         tabWidget->addTab(tabOperations, QString());
+        tabCatalog = new QWidget();
+        tabCatalog->setObjectName(QString::fromUtf8("tabCatalog"));
+        pbExcludePathAndBelow = new QPushButton(tabCatalog);
+        pbExcludePathAndBelow->setObjectName(QString::fromUtf8("pbExcludePathAndBelow"));
+        pbExcludePathAndBelow->setGeometry(QRect(90, 60, 221, 71));
+        leExcludePath = new QLineEdit(tabCatalog);
+        leExcludePath->setObjectName(QString::fromUtf8("leExcludePath"));
+        leExcludePath->setGeometry(QRect(170, 170, 191, 25));
+        label_4 = new QLabel(tabCatalog);
+        label_4->setObjectName(QString::fromUtf8("label_4"));
+        label_4->setGeometry(QRect(30, 170, 131, 20));
+        leExcludeFilePath = new QLineEdit(tabCatalog);
+        leExcludeFilePath->setObjectName(QString::fromUtf8("leExcludeFilePath"));
+        leExcludeFilePath->setEnabled(true);
+        leExcludeFilePath->setGeometry(QRect(530, 100, 301, 31));
+        leExcludeFilePath->setFont(font);
+        pbSelectExcludeFilePath = new QPushButton(tabCatalog);
+        pbSelectExcludeFilePath->setObjectName(QString::fromUtf8("pbSelectExcludeFilePath"));
+        pbSelectExcludeFilePath->setGeometry(QRect(840, 100, 31, 31));
+        pbSelectExcludeFilePath->setFont(font);
+        pbExcludePathAndBelow_2 = new QPushButton(tabCatalog);
+        pbExcludePathAndBelow_2->setObjectName(QString::fromUtf8("pbExcludePathAndBelow_2"));
+        pbExcludePathAndBelow_2->setGeometry(QRect(540, 400, 321, 121));
+        tableExcludeDirectories = new QListView(tabCatalog);
+        tableExcludeDirectories->setObjectName(QString::fromUtf8("tableExcludeDirectories"));
+        tableExcludeDirectories->setGeometry(QRect(480, 170, 451, 181));
+        tableExcludeDirectories->setFont(font);
+        tabWidget->addTab(tabCatalog, QString());
+        pbSelectExcludeFilePath->raise();
+        pbExcludePathAndBelow->raise();
+        leExcludePath->raise();
+        label_4->raise();
+        leExcludeFilePath->raise();
+        pbExcludePathAndBelow_2->raise();
+        tableExcludeDirectories->raise();
         MomsDuplicateDeleter->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MomsDuplicateDeleter);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -364,10 +404,6 @@ public:
         pbOpenDirectory->setText(QApplication::translate("MomsDuplicateDeleter", "Open \n"
 "Selected \n"
 "Directory", nullptr));
-        pbExcludePathAndBelow->setText(QApplication::translate("MomsDuplicateDeleter", "Exclude files \n"
-"from Directory/Folder\n"
-"Entered Belowfrom catalog\n"
-" (and all sub-folders) ", nullptr));
         label_3->setText(QApplication::translate("MomsDuplicateDeleter", "User Entered Path:", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabCleanup), QApplication::translate("MomsDuplicateDeleter", "File Cleanup", nullptr));
         label->setText(QApplication::translate("MomsDuplicateDeleter", "This area will eventually be a place that you can gather and view all your files in one place", nullptr));
@@ -399,6 +435,25 @@ public:
 "with Copy, copy COPY, or \"(*)\"\n"
 "in the filename.", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabOperations), QApplication::translate("MomsDuplicateDeleter", "Just Do It", nullptr));
+        pbExcludePathAndBelow->setText(QApplication::translate("MomsDuplicateDeleter", "Exclude files \n"
+"from Directory/Folder\n"
+"Entered Belowfrom catalog\n"
+" (and all sub-folders) ", nullptr));
+        label_4->setText(QApplication::translate("MomsDuplicateDeleter", "User Entered Path:", nullptr));
+#ifndef QT_NO_TOOLTIP
+        leExcludeFilePath->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>This area simply shows the Directory/Folder that will be used for the Search operation.  Use the ... button to the right to choose that directory/folder.</p></body></html>", nullptr));
+#endif // QT_NO_TOOLTIP
+        leExcludeFilePath->setText(QApplication::translate("MomsDuplicateDeleter", "Type in a directory or choose the ... button", nullptr));
+#ifndef QT_NO_TOOLTIP
+        pbSelectExcludeFilePath->setToolTip(QApplication::translate("MomsDuplicateDeleter", "<html><head/><body><p>This button allows you to select a directory/folder to search for duplicates in. This will also search in it's subdirectories./subfolder.  </p><p> Once the search is complete, you can choose and search another directory/folder to build up a complete list of places that duplicates could be hiding in before starting to use the delete operations.</p></body></html>", nullptr));
+#endif // QT_NO_TOOLTIP
+        pbSelectExcludeFilePath->setText(QApplication::translate("MomsDuplicateDeleter", "...", nullptr));
+        pbExcludePathAndBelow_2->setText(QApplication::translate("MomsDuplicateDeleter", "Exclude files \n"
+"from Directory/Folder\n"
+", listed in the table, from catalog\n"
+" (and all sub-folders) \n"
+"contained in the Exclusion Table.", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(tabCatalog), QApplication::translate("MomsDuplicateDeleter", "Catalog Cleanup", nullptr));
     } // retranslateUi
 
 };

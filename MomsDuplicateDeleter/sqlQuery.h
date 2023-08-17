@@ -5,6 +5,10 @@
   "CREATE TABLE files (id INTEGER PRIMARY KEY, name TEXT, path TEXT, size "    \
   "UNSIGNED BIT INTEGER, toSave BOOLEAN, checksum UNSIGNED BIG INTEGER, "      \
   "UNIQUE(name, path) ON CONFLICT IGNORE)"
+#define qryCreateExcludePathTable                                              \
+  "CREATE TABLE excludePath (id "                                              \
+  "INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"                         \
+  "excluedPath TEXT NOT NULL UNIQUE)"
 #define qryCreateIndexes                                                       \
   "CREATE INDEX index_size_checksum ON files (size, checksum)"
 #define qryFilePath "select path, name from files where id == "

@@ -42,8 +42,8 @@ bool MomsDuplicateDeleter::removeEmptyDirectory(QString dir) {
              << (r ? "finished successfully" : "failed");
     return true;
   } else {
-    QMessageBox::information(this, "Directory is NOT empty",
-                             dir + " is NOT Empty!!!");
+    //    QMessageBox::information(this, "Directory is NOT empty",
+    //                             dir + " is NOT Empty!!!");
     return false;
   }
 }
@@ -101,7 +101,7 @@ void MomsDuplicateDeleter::deleteDuplicateFiles(bool simulatedFlag) {
       QString fileToBeDeleted;
       while (query6.next()) {
         fileToBeDeleted.append(query6.value("path").toString());
-        fileToBeDeleted.append("/");
+        //       fileToBeDeleted.append("/");
         fileToBeDeleted.append(query6.value("name").toString());
         if (!simulatedFlag) {
           QFile removeFile(fileToBeDeleted);
@@ -216,7 +216,7 @@ void MomsDuplicateDeleter::deleteDuplicateCopyFiles(bool simulatedFlag) {
       QString fileToBeDeleted;
       while (query6.next()) {
         fileToBeDeleted.append(query6.value("path").toString());
-        fileToBeDeleted.append("/");
+        //        fileToBeDeleted.append("/");
         fileToBeDeleted.append(query6.value("name").toString());
         if (!simulatedFlag) {
           QFile removeFile(fileToBeDeleted);
@@ -549,8 +549,11 @@ int MomsDuplicateDeleter::searchForAndInsertFileType() {
   QSqlQuery query(qryCreateFileTable);
   if (!query.isActive())
     qWarning() << "ERROR: " << query.lastError().text();
+  if (!query.exec(qryCreateExcludePathTable))
+    qWarning() << "ERROR: " << query.lastError().text();
   if (!query.exec(qryCreateIndexes))
     qWarning() << "ERROR: " << query.lastError().text();
+
   QDirIterator it2(ui->lePathToSearch->text(),
                    QStringList() << ui->cbFileType->currentText(), QDir::Files,
                    QDirIterator::Subdirectories);
@@ -622,7 +625,7 @@ int MomsDuplicateDeleter::searchForAndInsertFileType() {
     insertQuery.append("', '");
     insertQuery.append(
         it.fileInfo().absoluteDir().absolutePath().replace("'", "''"));
-    insertQuery.append("', ");
+    insertQuery.append("/', ");
     insertQuery.append(QString::number(it.fileInfo().size()));
     insertQuery.append(", ");
 
@@ -796,7 +799,7 @@ void MomsDuplicateDeleter::deleteDuplicateFilesFromPathAndBelow(
         QString fileToBeDeleted;
         while (query6.next()) {
           fileToBeDeleted.append(query6.value("path").toString());
-          fileToBeDeleted.append("/");
+          //          fileToBeDeleted.append("/");
           fileToBeDeleted.append(query6.value("name").toString());
           QSqlQuery query5;
           query5.prepare(qryDeleteFileByID + QString::number(uniqueFileID));
@@ -871,12 +874,13 @@ void MomsDuplicateDeleter::deleteDuplicateFilesFromPathAndBelow(
         "specified path. ");
 }
 
-void MomsDuplicateDeleter::excludeDuplicateFilesFromPathAndBelow() {
-  if (ui->leUserSubPath->text() != "") {
+void MomsDuplicateDeleter::excludeDuplicateFilesFromPathAndBelow(
+    QString pathToExlude) {
+  if (pathToExlude != "") {
     unsigned int j = 0;
     QApplication::setOverrideCursor(Qt::WaitCursor);
     ui->progressBar->show();
-    ui->progressBar->setFormat("Starting delete operation ");
+    ui->progressBar->setFormat("Starting exclude operation ");
     ui->progressBar->setValue(0);
 
     QApplication::processEvents();
@@ -892,9 +896,8 @@ void MomsDuplicateDeleter::excludeDuplicateFilesFromPathAndBelow() {
     unsigned int uniqueFileCount = 0;
     qint64 totalSize = 0;
     QSqlQuery query4;
-    QString sFilePath(ui->leUserSubPath->text());
     QString tempQuery(qryExcludePathFromCatalog);
-    tempQuery.replace(":filePath", sFilePath);
+    tempQuery.replace(":filePath", pathToExlude);
     qWarning() << "query used " << tempQuery;
     query4.prepare(tempQuery);
     if (!query4.exec())
@@ -913,8 +916,9 @@ void MomsDuplicateDeleter::excludeDuplicateFilesFromPathAndBelow() {
     QMessageBox::information(
         0, "No Path Entered",
         "Please enter a Directory/Folder Path of the "
-        "duplicates you want to delete in the line below this button.  \nThis "
-        "will also delete the duplicates in all Directory/Folders under the "
+        "duplicates you want to exclude  in the line below this button.  "
+        "\nThis "
+        "will also exclude the duplicates in all Directory/Folders under the "
         "specified path. ");
 }
 void MomsDuplicateDeleter::deleteDuplicateFilesFromPath(bool simulatedFlag) {
@@ -973,7 +977,7 @@ void MomsDuplicateDeleter::deleteDuplicateFilesFromPath(bool simulatedFlag) {
         QString fileToBeDeleted;
         while (query6.next()) {
           fileToBeDeleted.append(query6.value("path").toString());
-          fileToBeDeleted.append("/");
+          //          fileToBeDeleted.append("/");
           fileToBeDeleted.append(query6.value("name").toString());
           QSqlQuery query5;
           query5.prepare(qryDeleteFileByID + QString::number(uniqueFileID));
@@ -1105,7 +1109,7 @@ void MomsDuplicateDeleter::deleteDuplicateFilesNotInPath(bool simulatedFlag) {
         QString fileToBeDeleted;
         while (query6.next()) {
           fileToBeDeleted.append(query6.value("path").toString());
-          fileToBeDeleted.append("/");
+          //          fileToBeDeleted.append("/");
           fileToBeDeleted.append(query6.value("name").toString());
           QSqlQuery query5;
           query5.prepare(qryDeleteFileByID + QString::number(uniqueFileID));
@@ -1236,8 +1240,7 @@ void MomsDuplicateDeleter::on_pbDeleteSingle_clicked() {
     QString sFilePath(ui->tableDuplicateResultsList
                           ->item(ui->tableDuplicateResultsList->currentRow(), 2)
                           ->text());
-    sFilePath.append("/" +
-                     ui->tableDuplicateResultsList
+    sFilePath.append(ui->tableDuplicateResultsList
                          ->item(ui->tableDuplicateResultsList->currentRow(), 1)
                          ->text());
     QMessageBox::StandardButton reply;
@@ -1271,8 +1274,7 @@ void MomsDuplicateDeleter::deleteSingleFile(bool simulatedFlag) {
   QString sFilePath(ui->tableDuplicateResultsList
                         ->item(ui->tableDuplicateResultsList->currentRow(), 2)
                         ->text());
-  sFilePath.append("/" +
-                   ui->tableDuplicateResultsList
+  sFilePath.append(ui->tableDuplicateResultsList
                        ->item(ui->tableDuplicateResultsList->currentRow(), 1)
                        ->text());
   QString sPath(ui->tableDuplicateResultsList
@@ -1325,6 +1327,31 @@ void MomsDuplicateDeleter::deleteSingleFile(bool simulatedFlag) {
   fillDuplicateFilesTable();
 }
 
+void MomsDuplicateDeleter::fillExludePathTableFromFile(
+    QString excludeListFileName) {
+  QFile file(excludeListFileName);
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    return;
+
+  QStringList stringList;
+  QTextStream textStream(&file);
+
+  while (!textStream.atEnd())
+    stringList << textStream.readLine();
+
+  file.close();
+
+  // qDebug() << stringList;
+  // Create model
+  stringListModel = new QStringListModel(this);
+  // Populate the model
+  stringListModel->setStringList(stringList);
+  ui->tableExcludeDirectories->setModel(stringListModel);
+  //  const QModelIndex &index = stringListModel->index(0, 0);
+  //  ui->tableExcludeDirectories->selectionModel()->select(
+  //      index, QItemSelectionModel::Select);
+}
+
 void MomsDuplicateDeleter::on_pbDeleteFromPathBelow_clicked() {
   if (ui->leUserSubPath->text() != "") {
     if (ui->cbSimulateFlag->isChecked()) {
@@ -1372,8 +1399,7 @@ void MomsDuplicateDeleter::on_pbViewImage_clicked() {
     QString sFilePath(ui->tableDuplicateResultsList
                           ->item(ui->tableDuplicateResultsList->currentRow(), 2)
                           ->text());
-    sFilePath.append("/" +
-                     ui->tableDuplicateResultsList
+    sFilePath.append(ui->tableDuplicateResultsList
                          ->item(ui->tableDuplicateResultsList->currentRow(), 1)
                          ->text());
     imageViewer.show();
@@ -1391,8 +1417,7 @@ void MomsDuplicateDeleter::on_pbViewMovie_clicked() {
     QString sFilePath(ui->tableDuplicateResultsList
                           ->item(ui->tableDuplicateResultsList->currentRow(), 2)
                           ->text());
-    sFilePath.append("/" +
-                     ui->tableDuplicateResultsList
+    sFilePath.append(ui->tableDuplicateResultsList
                          ->item(ui->tableDuplicateResultsList->currentRow(), 1)
                          ->text());
     QString sMovieCommand("mvp ");
@@ -1430,8 +1455,7 @@ void MomsDuplicateDeleter::on_pbVerifyDB_clicked() {
       float progressFraction =
           ((row * 100) / ui->tableDuplicateResultsList->rowCount());
       QString sFilePath(ui->tableDuplicateResultsList->item(row, 2)->text());
-      sFilePath.append("/" +
-                       ui->tableDuplicateResultsList->item(row, 1)->text());
+      sFilePath.append(ui->tableDuplicateResultsList->item(row, 1)->text());
       if (!fileExists(sFilePath)) {
         errorDetected = true;
         failedFile = sFilePath;
@@ -1476,8 +1500,7 @@ void MomsDuplicateDeleter::on_pbViewImage_2_clicked() {
     QString sFilePath(ui->tableExclusiveResultsList
                           ->item(ui->tableExclusiveResultsList->currentRow(), 2)
                           ->text());
-    sFilePath.append("/" +
-                     ui->tableExclusiveResultsList
+    sFilePath.append(ui->tableExclusiveResultsList
                          ->item(ui->tableExclusiveResultsList->currentRow(), 1)
                          ->text());
     imageViewer.show();
@@ -1531,15 +1554,15 @@ void MomsDuplicateDeleter::on_pbOpenDirectoryExclusive_clicked() {
 }
 
 void MomsDuplicateDeleter::on_pbExcludePathAndBelow_clicked() {
-  if (ui->leUserSubPath->text() != "") {
-    QString sFilePath(ui->leUserSubPath->text());
+  if (ui->leExcludePath->text() != "") {
+    QString sFilePath(ui->leExcludePath->text());
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "File Exclude Operation",
                                   "Excluding files, from the catalog, in\n " +
                                       sFilePath + " and below.\nAre you sure?",
                                   QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
-      excludeDuplicateFilesFromPathAndBelow();
+      excludeDuplicateFilesFromPathAndBelow(sFilePath);
       fillDuplicateFilesTable();
     } else {
       qDebug() << "Operation Cancelled";
@@ -1585,4 +1608,42 @@ void MomsDuplicateDeleter::on_pbDeleteCopyFiles_clicked() {
       qDebug() << "Operation Cancelled";
     }
   }
+}
+
+void MomsDuplicateDeleter::on_pbSelectExcludeFilePath_clicked() {
+  ui->leExcludeFilePath->setText(
+      QFileDialog::getOpenFileName(this, tr("Open File"), "."));
+  fillExludePathTableFromFile(ui->leExcludeFilePath->text());
+}
+
+void MomsDuplicateDeleter::on_pbExcludePathAndBelow_2_clicked() {
+  qDebug() << ui->tableExcludeDirectories->model()->rowCount();
+  if (ui->tableExcludeDirectories->model()->rowCount() > 0) {
+    QMessageBox::StandardButton reply;
+    for (int r = 0; r < ui->tableExcludeDirectories->model()->rowCount(); ++r) {
+      QModelIndex index = ui->tableExcludeDirectories->model()->index(r, 0);
+      QString sFilePath =
+          ui->tableExcludeDirectories->model()->data(index).toString();
+      qDebug() << sFilePath << "is being excluded from the catalog";
+      reply =
+          QMessageBox::question(this, "File Exclude Operation",
+                                "Excluding files, from the catalog, in\n " +
+                                    sFilePath + " and below.\nAre you sure?",
+                                QMessageBox::Yes | QMessageBox::No);
+      if (reply == QMessageBox::Yes) {
+        excludeDuplicateFilesFromPathAndBelow(sFilePath);
+
+      } else {
+        qDebug() << "Operation Cancelled";
+      }
+    }
+    fillDuplicateFilesTable();
+  }
+
+  else
+    QMessageBox::information(
+        0, "No Paths in Exclude List",
+        "Please select a file containing list of Directory/Folder paths you "
+        "want to exclude. \nThis will also exclude the files in all "
+        "Directory/Folders under the specified path from the catalog. ");
 }

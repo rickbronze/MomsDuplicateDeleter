@@ -42,13 +42,14 @@ public:
   void deleteDuplicateFilesNotInPath(bool simulatedFlag);
 
   void deleteSingleFile(bool simulatedFlag);
+  void fillExludePathTableFromFile(QString excludeListFileName);
   void deleteDuplicateFilesFromPathAndBelow(bool simulatedFlag);
   ImageViewer imageViewer;
   Window window;
   bool fileExists(QString path);
   void fillUniqueFilesTable();
   bool removeEmptyDirectory(QString);
-  void excludeDuplicateFilesFromPathAndBelow();
+  void excludeDuplicateFilesFromPathAndBelow(QString pathToExlude);
   void deleteDuplicateCopyFiles(bool simulatedFlag);
 private slots:
   void on_pbSelectDirectory_clicked();
@@ -89,7 +90,13 @@ private slots:
 
   void on_pbDeleteCopyFiles_clicked();
 
+  void on_pbSelectExcludeFilePath_clicked();
+
+  void on_pbExcludePathAndBelow_2_clicked();
+
 private:
+  QStringListModel *stringListModel;
+
   QVector<QDir> fileList;
   QString databaseFilename;
   Ui::MomsDuplicateDeleter *ui;

@@ -338,7 +338,7 @@ from Directory/Folder Chosen</string>
      <widget class="QLineEdit" name="leUserSubPath">
       <property name="geometry">
        <rect>
-        <x>690</x>
+        <x>710</x>
         <y>180</y>
         <width>191</width>
         <height>25</height>
@@ -450,7 +450,7 @@ Duplicate file</string>
      <widget class="QPushButton" name="pbDeleteFromPathBelow">
       <property name="geometry">
        <rect>
-        <x>570</x>
+        <x>640</x>
         <y>100</y>
         <width>191</width>
         <height>61</height>
@@ -541,26 +541,10 @@ Selected
 Directory</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pbExcludePathAndBelow">
-      <property name="geometry">
-       <rect>
-        <x>770</x>
-        <y>100</y>
-        <width>221</width>
-        <height>71</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Exclude files 
-from Directory/Folder
-Entered Belowfrom catalog
- (and all sub-folders) </string>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_3">
       <property name="geometry">
        <rect>
-        <x>550</x>
+        <x>570</x>
         <y>180</y>
         <width>131</width>
         <height>20</height>
@@ -757,6 +741,134 @@ with Copy, copy COPY, or &quot;(*)&quot;
 in the filename.</string>
       </property>
      </widget>
+    </widget>
+    <widget class="QWidget" name="tabCatalog">
+     <attribute name="title">
+      <string>Catalog Cleanup</string>
+     </attribute>
+     <widget class="QPushButton" name="pbExcludePathAndBelow">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>60</y>
+        <width>221</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Exclude files 
+from Directory/Folder
+Entered Belowfrom catalog
+ (and all sub-folders) </string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="leExcludePath">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>170</y>
+        <width>191</width>
+        <height>25</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>170</y>
+        <width>131</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>User Entered Path:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="leExcludeFilePath">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>100</y>
+        <width>301</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This area simply shows the Directory/Folder that will be used for the Search operation.  Use the ... button to the right to choose that directory/folder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>Type in a directory or choose the ... button</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbSelectExcludeFilePath">
+      <property name="geometry">
+       <rect>
+        <x>840</x>
+        <y>100</y>
+        <width>31</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button allows you to select a directory/folder to search for duplicates in. This will also search in it's subdirectories./subfolder.  &lt;/p&gt;&lt;p&gt; Once the search is complete, you can choose and search another directory/folder to build up a complete list of places that duplicates could be hiding in before starting to use the delete operations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbExcludePathAndBelow_2">
+      <property name="geometry">
+       <rect>
+        <x>540</x>
+        <y>400</y>
+        <width>321</width>
+        <height>121</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Exclude files 
+from Directory/Folder
+, listed in the table, from catalog
+ (and all sub-folders) 
+contained in the Exclusion Table.</string>
+      </property>
+     </widget>
+     <widget class="QListView" name="tableExcludeDirectories">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>170</y>
+        <width>451</width>
+        <height>181</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+     </widget>
+     <zorder>pbSelectExcludeFilePath</zorder>
+     <zorder>pbExcludePathAndBelow</zorder>
+     <zorder>leExcludePath</zorder>
+     <zorder>label_4</zorder>
+     <zorder>leExcludeFilePath</zorder>
+     <zorder>pbExcludePathAndBelow_2</zorder>
+     <zorder>tableExcludeDirectories</zorder>
     </widget>
    </widget>
   </widget>
